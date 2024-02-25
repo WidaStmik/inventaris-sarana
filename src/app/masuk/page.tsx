@@ -33,7 +33,6 @@ export default function Masuk() {
           return "Sukses";
         },
         error: (err) => {
-          console.log(err);
           return err.message;
         },
       }
