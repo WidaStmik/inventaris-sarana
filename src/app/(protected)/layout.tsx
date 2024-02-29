@@ -6,6 +6,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import Loading from "@/components/common/loading";
 
 import { redirect } from "next/navigation";
+import Navbar from "@/components/common/navbar";
+import MobileNavbar from "@/components/common/mobile-navbar";
 
 export default function AuthLayout({ children }: ComponentProps) {
   const [user, loading, error] = useAuthState(auth);
@@ -28,5 +30,13 @@ export default function AuthLayout({ children }: ComponentProps) {
     );
   }
 
-  return <div>{children}</div>;
+  return (
+    <div className="flex">
+      <Navbar />
+
+      <MobileNavbar />
+
+      <div>{children}</div>
+    </div>
+  );
 }
