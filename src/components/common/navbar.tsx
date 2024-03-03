@@ -16,7 +16,7 @@ export default function Navbar() {
         "hidden lg:flex bg-gray-50 h-screen shadow-lg relative",
         "transition-all duration-300 ease-in-out overflow-hidden",
         "flex-col items-center",
-        isOpen ? "w-64" : "w-16"
+        isOpen ? "w-96" : "w-16"
       )}
     >
       <div

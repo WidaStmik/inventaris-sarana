@@ -8,8 +8,8 @@ export const NAV_ITEMS = [
     Icon: GoHome,
   },
   {
-    text: "Table",
-    href: "/table",
+    text: "Daftar Ruangan",
+    href: "/ruangan",
     Icon: MdOutlineBackupTable,
   },
 ];
