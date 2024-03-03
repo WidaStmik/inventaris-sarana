@@ -27,7 +27,7 @@ export default function Navbar() {
         )}
       >
         <IoChevronBackCircleSharp
-          className="text-4xl"
+          className="text-4xl cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
         />
       </div>

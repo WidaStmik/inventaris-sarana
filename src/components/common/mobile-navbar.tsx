@@ -11,7 +11,7 @@ export default function MobileNavbar() {
   const pathname = usePathname();
 
   return (
-    <div className="px-16 fixed bottom-0 w-screen h-16 border bg-gray-50 flex items-center justify-around lg:hidden">
+    <div className="px-16 fixed z-[10] bottom-0 w-screen h-16 border bg-gray-50 flex items-center justify-around lg:hidden">
       {NAV_ITEMS.map((item) => (
         <Link
           href={item.href}
