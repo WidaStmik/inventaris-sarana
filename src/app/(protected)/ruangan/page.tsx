@@ -60,7 +60,7 @@ const columns: TableColumn<Room>[] = [
   },
 ];
 
-export default function TablePage() {
+export default function DaftarRuangan() {
   //   const [snapshot, loading, error] = useCollection(collection(db, "rooms"));
 
   return (
