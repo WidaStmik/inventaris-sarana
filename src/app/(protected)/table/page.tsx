@@ -41,6 +41,7 @@ const columns: TableColumn<Room>[] = [
   },
   {
     name: "Jumlah Properti",
+    width: "240px",
     cell(row, rowIndex, column, id) {
       return (
         <div className="flex items-center gap-2">
