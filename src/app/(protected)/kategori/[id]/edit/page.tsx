@@ -5,7 +5,6 @@ import { useUpdateKategoriMutation } from "@/services/ruangan";
 import { PageProps } from "@/types/common";
 import { Kategori } from "@/types/ruangan";
 import { doc } from "firebase/firestore";
-import { redirect, useRouter } from "next/navigation";
 import React, { ReactPropTypes, useEffect, useMemo, useState } from "react";
 import { Button, Input } from "react-daisyui";
 import { useDocument, useDocumentData } from "react-firebase-hooks/firestore";
@@ -23,7 +22,6 @@ export default function TambahKategori(props: PageProps) {
 
   const [state, setState] = useState<Kategori>(data);
   const [updateKategori, { isLoading }] = useUpdateKategoriMutation();
-  const router = useRouter();
 
   useEffect(() => {
     if (!data) return;
