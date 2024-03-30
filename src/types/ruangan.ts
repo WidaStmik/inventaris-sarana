@@ -8,6 +8,10 @@ export interface Ruangan {
     broken: number;
     good: number;
   };
+  images?: {
+    name: string;
+    url: string;
+  }[];
 }
 
 export interface Kategori {
