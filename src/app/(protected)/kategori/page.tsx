@@ -38,7 +38,11 @@ export default function DaftarKategori() {
         </Button>
       </Link>
       <div className="mt-4">
-        <DataTable columns={columns} data={data ?? []} />
+        <DataTable
+          columns={columns}
+          data={data ?? []}
+          progressPending={loading}
+        />
       </div>
     </div>
   );

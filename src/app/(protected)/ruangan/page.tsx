@@ -2,7 +2,7 @@
 import { Ruangan } from "@/types/ruangan";
 import React from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { Button } from "react-daisyui";
+import { Button, Loading } from "react-daisyui";
 import { FaPlus } from "react-icons/fa";
 import { collection } from "firebase/firestore";
 import { db } from "@/services/firebase";
@@ -47,6 +47,21 @@ const columns: TableColumn<Ruangan>[] = [
       );
     },
   },
+  {
+    name: "Aksi",
+    width: "200px",
+    cell(row, rowIndex, column, id) {
+      return (
+        <div className="flex items-center gap-2">
+          <Link href={`/ruangan/${id}`}>
+            <Button size="sm" color="primary">
+              Lihat Ruangan
+            </Button>
+          </Link>
+        </div>
+      );
+    },
+  },
 ];
 
 export default function DaftarRuangan() {
@@ -62,7 +77,11 @@ export default function DaftarRuangan() {
         </Button>
       </Link>
       <div className="mt-4">
-        <DataTable columns={columns} data={data ?? []} />
+        <DataTable
+          progressPending={loading}
+          columns={columns}
+          data={data ?? []}
+        />
       </div>
     </div>
   );
