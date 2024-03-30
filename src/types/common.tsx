@@ -7,3 +7,5 @@ export interface ComponentProps {
 export interface PageProps {
   params: Record<string, string>;
 }
+
+export type FunctionLike = (...args: any[]) => any;

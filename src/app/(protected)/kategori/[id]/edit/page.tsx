@@ -1,7 +1,11 @@
 "use client";
+import Confirmation from "@/components/common/confirmation";
 import Loading from "@/components/common/loading";
 import { db } from "@/services/firebase";
-import { useUpdateKategoriMutation } from "@/services/ruangan";
+import {
+  useDeleteKategoriMutation,
+  useUpdateKategoriMutation,
+} from "@/services/ruangan";
 import { PageProps } from "@/types/common";
 import { Kategori } from "@/types/ruangan";
 import { doc } from "firebase/firestore";
@@ -22,6 +26,8 @@ export default function TambahKategori(props: PageProps) {
 
   const [state, setState] = useState<Kategori>(data);
   const [updateKategori, { isLoading }] = useUpdateKategoriMutation();
+  const [deleteKategori, { isLoading: isDeleting }] =
+    useDeleteKategoriMutation();
 
   useEffect(() => {
     if (!data) return;
@@ -82,9 +88,20 @@ export default function TambahKategori(props: PageProps) {
           />
         </div>
 
-        <Button className="mt-4" color="primary" loading={isLoading}>
-          Update Kategori
-        </Button>
+        <div className="flex gap-2 items-center mt-4">
+          <Button color="primary" loading={isLoading}>
+            Simpan
+          </Button>
+
+          <Confirmation
+            onConfirm={deleteKategori}
+            text="Apakah anda yakin ingin menghapus kategori ini?"
+          >
+            <Button type="button" color="error">
+              Hapus
+            </Button>
+          </Confirmation>
+        </div>
       </form>
     </main>
   );

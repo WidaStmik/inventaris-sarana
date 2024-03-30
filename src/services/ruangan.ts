@@ -72,4 +72,5 @@ export const {
   useUpdateKategoriMutation,
   useUpdateRuanganMutation,
   useDeleteRuanganMutation,
+  useDeleteKategoriMutation,
 } = ruanganApi;

@@ -1,10 +1,11 @@
 "use client";
+import { FunctionLike } from "@/types/common";
 import React, { useState } from "react";
 import { Button, Modal } from "react-daisyui";
 
 interface Props {
   children: React.ReactNode;
-  onConfirm: () => void;
+  onConfirm: FunctionLike;
   text: string;
   confirmText?: string;
   cancelText?: string;
@@ -35,10 +36,20 @@ export default function Confirmation({
         <div>{text}</div>
 
         <Modal.Actions>
-          <Button className="flex-1" onClick={toggle} variant="outline">
+          <Button
+            type="button"
+            className="flex-1"
+            onClick={toggle}
+            variant="outline"
+          >
             {cancelText}
           </Button>
-          <Button className="flex-1" onClick={confirm} color="primary">
+          <Button
+            type="button"
+            className="flex-1"
+            onClick={confirm}
+            color="primary"
+          >
             {confirmText}
           </Button>
         </Modal.Actions>
