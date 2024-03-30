@@ -1,7 +1,7 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Kategori, Ruangan } from "@/types/ruangan";
 import { db } from "./firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 
 export const ruanganApi = createApi({
   reducerPath: "ruanganApi",
@@ -26,6 +26,14 @@ export const ruanganApi = createApi({
       },
       invalidatesTags: ["Kategori"],
     }),
+    updateKategori: build.mutation<Kategori, Kategori>({
+      queryFn: async (arg) => {
+        const { id, ...rest } = arg;
+        await updateDoc(doc(db, "kategori", id), rest);
+        return { data: arg };
+      },
+      invalidatesTags: ["Kategori"],
+    }),
   }),
 });
 
@@ -33,4 +41,5 @@ export const {
   useGetRuanganQuery,
   useAddRuanganMutation,
   useAddKategoriMutation,
+  useUpdateKategoriMutation,
 } = ruanganApi;

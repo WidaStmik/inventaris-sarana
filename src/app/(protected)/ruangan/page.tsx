@@ -53,7 +53,7 @@ const columns: TableColumn<Ruangan>[] = [
     cell(row, rowIndex, column, id) {
       return (
         <div className="flex items-center gap-2">
-          <Link href={`/ruangan/${id}`}>
+          <Link href={`/ruangan/${row.id}`}>
             <Button size="sm" color="primary">
               Lihat Ruangan
             </Button>

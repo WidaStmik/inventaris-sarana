@@ -23,6 +23,21 @@ const columns: TableColumn<Kategori>[] = [
     name: "Deskripsi",
     selector: (row) => row.description,
   },
+  {
+    name: "Aksi",
+    width: "200px",
+    cell(row, rowIndex, column, id) {
+      return (
+        <div className="flex items-center gap-2">
+          <Link href={`/kategori/${row.id}/edit`}>
+            <Button size="sm" color="primary">
+              Edit
+            </Button>
+          </Link>
+        </div>
+      );
+    },
+  },
 ];
 
 export default function DaftarKategori() {
