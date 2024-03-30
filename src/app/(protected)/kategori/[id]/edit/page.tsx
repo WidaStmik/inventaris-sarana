@@ -34,7 +34,6 @@ export default function TambahKategori(props: PageProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setState((prev) => ({
       ...prev,
       [name]: value,
