@@ -66,7 +66,10 @@ const columns: TableColumn<Ruangan>[] = [
 
 export default function DaftarRuangan() {
   const [snapshot, loading, error] = useCollection(collection(db, "ruangan"));
-  const data = snapshot?.docs.map((doc) => doc.data()) as Ruangan[];
+  const data = snapshot?.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id,
+  })) as Ruangan[];
 
   return (
     <div>

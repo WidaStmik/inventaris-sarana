@@ -42,7 +42,10 @@ const columns: TableColumn<Kategori>[] = [
 
 export default function DaftarKategori() {
   const [snapshot, loading, error] = useCollection(collection(db, "kategori"));
-  const data = snapshot?.docs.map((doc) => doc.data()) as Kategori[];
+  const data = snapshot?.docs.map((doc) => ({
+    ...doc.data(),
+    id: doc.id,
+  })) as Kategori[];
 
   return (
     <div>
