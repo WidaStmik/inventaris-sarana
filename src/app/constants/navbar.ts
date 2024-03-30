@@ -1,5 +1,5 @@
 import { GoHome } from "react-icons/go";
-import { MdOutlineBackupTable } from "react-icons/md";
+import { MdOutlineBackupTable, MdOutlineCategory } from "react-icons/md";
 
 export const NAV_ITEMS = [
   {
@@ -11,5 +11,10 @@ export const NAV_ITEMS = [
     text: "Daftar Ruangan",
     href: "/ruangan",
     Icon: MdOutlineBackupTable,
+  },
+  {
+    text: "Daftar Kategori",
+    href: "/kategori",
+    Icon: MdOutlineCategory,
   },
 ];

@@ -1,26 +1,15 @@
 "use client";
-import { db } from "@/services/firebase";
-import { Room } from "@/types/rooms";
-import { collection } from "firebase/firestore";
+import { Ruangan } from "@/types/ruangan";
 import React from "react";
-import { useCollection } from "react-firebase-hooks/firestore";
 import DataTable, { TableColumn } from "react-data-table-component";
+import { Button } from "react-daisyui";
+import { FaPlus } from "react-icons/fa";
+import { collection } from "firebase/firestore";
+import { db } from "@/services/firebase";
+import { useCollection } from "react-firebase-hooks/firestore";
+import Link from "next/link";
 
-const dummyRooms: Room[] = Array.from({ length: 30 }).map((_, i) => {
-  return {
-    id: Math.random().toString(36),
-    name: `Room ${i}`,
-    code: `RM-${i}`,
-    category: "Room 1",
-    propertyCount: {
-      total: Math.floor(Math.random() * 100),
-      good: Math.floor(Math.random() * 100),
-      broken: Math.floor(Math.random() * 100),
-    },
-  };
-});
-
-const columns: TableColumn<Room>[] = [
+const columns: TableColumn<Ruangan>[] = [
   {
     name: "#",
     selector: (_, index) => Number(index) + 1,
@@ -46,13 +35,13 @@ const columns: TableColumn<Room>[] = [
       return (
         <div className="flex items-center gap-2">
           <span className="text-green-500">
-            Bagus: {row.propertyCount.good}
+            Bagus: {row.propertyCount?.good ?? 0}
           </span>
           <span className="text-red-500">
-            Rusak: {row.propertyCount.broken}
+            Rusak: {row.propertyCount?.broken ?? 0}
           </span>
           <span className="text-blue-500">
-            Jumlah: {row.propertyCount.total}
+            Jumlah: {row.propertyCount?.total ?? 0}
           </span>
         </div>
       );
@@ -61,13 +50,19 @@ const columns: TableColumn<Room>[] = [
 ];
 
 export default function DaftarRuangan() {
-  //   const [snapshot, loading, error] = useCollection(collection(db, "rooms"));
+  const [snapshot, loading, error] = useCollection(collection(db, "ruangan"));
+  const data = snapshot?.docs.map((doc) => doc.data()) as Ruangan[];
 
   return (
     <div>
       <h1 className="text-3xl font-semibold">Daftar Ruangan</h1>
+      <Link href="/ruangan/tambah">
+        <Button color="primary" startIcon={<FaPlus />}>
+          Tambah Ruangan
+        </Button>
+      </Link>
       <div className="mt-4">
-        <DataTable columns={columns} data={dummyRooms} />
+        <DataTable columns={columns} data={data ?? []} />
       </div>
     </div>
   );

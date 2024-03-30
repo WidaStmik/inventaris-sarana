@@ -36,7 +36,7 @@ export default function AuthLayout({ children }: ComponentProps) {
 
       <MobileNavbar />
 
-      <div className="p-4 overflow-y-auto max-h-screen w-full mb-16 lg:mb-0">
+      <div className="p-4 xl:p-8 overflow-y-auto max-h-screen w-full mb-16 lg:mb-0">
         {children}
       </div>
     </div>
