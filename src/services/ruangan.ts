@@ -1,7 +1,13 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Kategori, Ruangan } from "@/types/ruangan";
 import { db } from "./firebase";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 
 export const ruanganApi = createApi({
   reducerPath: "ruanganApi",
@@ -16,6 +22,21 @@ export const ruanganApi = createApi({
       queryFn: async (arg) => {
         const docRef = await addDoc(collection(db, "ruangan"), arg);
         return { data: { ...arg, id: docRef.id } };
+      },
+      invalidatesTags: ["Ruangan"],
+    }),
+    updateRuangan: build.mutation<Ruangan, Ruangan>({
+      queryFn: async (arg) => {
+        const { id, ...rest } = arg;
+        await updateDoc(doc(db, "ruangan", id), rest);
+        return { data: arg };
+      },
+      invalidatesTags: ["Ruangan"],
+    }),
+    deleteRuangan: build.mutation<void, string>({
+      queryFn: async (id) => {
+        await deleteDoc(doc(db, "ruangan", id));
+        return { data: undefined };
       },
       invalidatesTags: ["Ruangan"],
     }),
@@ -34,6 +55,13 @@ export const ruanganApi = createApi({
       },
       invalidatesTags: ["Kategori"],
     }),
+    deleteKategori: build.mutation<void, string>({
+      queryFn: async (id) => {
+        await deleteDoc(doc(db, "kategori", id));
+        return { data: undefined };
+      },
+      invalidatesTags: ["Kategori"],
+    }),
   }),
 });
 
@@ -42,4 +70,6 @@ export const {
   useAddRuanganMutation,
   useAddKategoriMutation,
   useUpdateKategoriMutation,
+  useUpdateRuanganMutation,
+  useDeleteRuanganMutation,
 } = ruanganApi;

@@ -1,4 +1,5 @@
 "use client";
+import Confirmation from "@/components/common/confirmation";
 import { db } from "@/services/firebase";
 import { PageProps } from "@/types/common";
 import { Ruangan } from "@/types/ruangan";
@@ -23,6 +24,13 @@ export default function EditRuangan(props: PageProps) {
       <h1 className="text-3xl font-semibold">
         Edit Ruangan <span className="text-primary">{data.name}</span>
       </h1>
+
+      <Confirmation
+        onConfirm={() => {}}
+        text="Apakah anda yakin ingin menghapus ruangan ini?"
+      >
+        Halo
+      </Confirmation>
     </div>
   );
 }
