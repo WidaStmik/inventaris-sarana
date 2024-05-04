@@ -49,13 +49,19 @@ const columns: TableColumn<Ruangan>[] = [
   },
   {
     name: "Aksi",
-    width: "200px",
+    width: "400px",
     cell(row, rowIndex, column, id) {
       return (
         <div className="flex items-center gap-2">
           <Link href={`/ruangan/${row.id}`}>
             <Button size="sm" color="primary">
               Lihat Ruangan
+            </Button>
+          </Link>
+
+          <Link href={`/ruangan/${row.id}/edit`}>
+            <Button size="sm" color="warning">
+              Edit Ruangan
             </Button>
           </Link>
         </div>
