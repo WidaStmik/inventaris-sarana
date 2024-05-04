@@ -1,6 +1,6 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Kategori, Ruangan } from "@/types/ruangan";
-import { db } from "./firebase";
+import { db, storage } from "./firebase";
 import {
   addDoc,
   collection,
@@ -8,6 +8,7 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export const ruanganApi = createApi({
   reducerPath: "ruanganApi",
@@ -62,6 +63,38 @@ export const ruanganApi = createApi({
       },
       invalidatesTags: ["Kategori"],
     }),
+    uploadImages: build.mutation<
+      Ruangan["images"],
+      {
+        id: string;
+        images: File[];
+      }
+    >({
+      queryFn: async ({ images, id }) => {
+        const promises = images.map((image) => {
+          const storageRef = ref(storage, `images/${image.name}`);
+          return uploadBytes(storageRef, image);
+        });
+
+        const res = await Promise.all(promises);
+        const downloadURLs = await Promise.all(
+          res.map((snapshot) => getDownloadURL(snapshot.ref))
+        );
+
+        // update ruangan
+        const ruanganRef = doc(db, "ruangan", id);
+        await updateDoc(ruanganRef, {
+          images: downloadURLs.map((url, i) => ({
+            name: images[i].name,
+            url,
+          })),
+        });
+
+        return {
+          data: downloadURLs.map((url, i) => ({ name: images[i].name, url })),
+        };
+      },
+    }),
   }),
 });
 
@@ -73,4 +106,5 @@ export const {
   useUpdateRuanganMutation,
   useDeleteRuanganMutation,
   useDeleteKategoriMutation,
+  useUploadImagesMutation,
 } = ruanganApi;

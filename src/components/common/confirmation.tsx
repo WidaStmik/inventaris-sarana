@@ -9,6 +9,7 @@ interface Props {
   text: string;
   confirmText?: string;
   cancelText?: string;
+  className?: string;
 }
 
 export default function Confirmation({
@@ -17,6 +18,7 @@ export default function Confirmation({
   text,
   confirmText = "Ya",
   cancelText = "Tidak",
+  className,
 }: Props) {
   const [open, setOpen] = useState(false);
 
@@ -28,7 +30,7 @@ export default function Confirmation({
   };
 
   return (
-    <div>
+    <div className={className}>
       <div className="cursor-pointer" onClick={toggle}>
         {children}
       </div>

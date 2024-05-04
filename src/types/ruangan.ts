@@ -11,6 +11,7 @@ export interface Ruangan {
   images?: {
     name: string;
     url: string;
+    isHome?: boolean;
   }[];
 }
 

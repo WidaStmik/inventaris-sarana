@@ -7,7 +7,7 @@ import { doc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useMemo } from "react";
-import { Button } from "react-daisyui";
+import { Button, Tooltip } from "react-daisyui";
 import { useDocument } from "react-firebase-hooks/firestore";
 import { FaEdit } from "react-icons/fa";
 
@@ -25,14 +25,18 @@ export default function RuanganPage(props: PageProps) {
 
   return (
     <div>
-      <h1 className="text-3xl font-semibold">
-        Ruangan <span className="text-primary">{data.name}</span>
+      <h1 className="text-3xl flex items-center gap-2">
+        <span>
+          Ruangan <span className="font-semibold">{data.name}</span>
+        </span>
+        <Tooltip message="Edit" position="bottom">
+          <Link href={`/ruangan/${data.id}/edit`} className="text-primary">
+            <FaEdit />
+          </Link>
+        </Tooltip>
       </h1>
-      <Link href={`/ruangan/${data.id}/edit`}>
-        <Button color="primary" startIcon={<FaEdit />}>
-          Edit Ruangan
-        </Button>
-      </Link>
+
+      <div>asd</div>
     </div>
   );
 }
