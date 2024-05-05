@@ -20,6 +20,10 @@ const columns: TableColumn<Kategori>[] = [
     selector: (row) => row.name,
   },
   {
+    name: "Kategori untuk",
+    selector: (row) => row.kind,
+  },
+  {
     name: "Deskripsi",
     selector: (row) => row.description,
   },
