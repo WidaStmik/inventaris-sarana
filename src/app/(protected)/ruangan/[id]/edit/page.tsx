@@ -50,7 +50,7 @@ export default function EditRuangan(props: PageProps) {
   const kategori = useMemo(
     () =>
       kategoriSnapshot?.docs
-        .filter((doc) => doc.data().kind === "sarana")
+        .filter((doc) => doc.data().kind === "ruangan")
         .map((doc) => doc.data()) as Kategori[],
     [kategoriSnapshot]
   );
