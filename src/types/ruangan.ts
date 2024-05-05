@@ -22,11 +22,9 @@ export interface Kategori {
   description: string;
 }
 
-// export interface Sarana {
-//   id: string;
-//   name: string;
-//   code: string;
-//   category: string;
-//   condition: "good" | "broken";
-//   ruanganId: string;
-// }
+export interface Sarana {
+  id: string;
+  name: string;
+  sku?: string;
+  category: string;
+}

@@ -102,15 +102,16 @@ export default function TambahKategori(props: PageProps) {
         </div>
 
         <div className="flex gap-2 items-center mt-4">
-          <Button color="primary" loading={isLoading}>
+          <Button className="flex-1" color="primary" loading={isLoading}>
             Simpan
           </Button>
 
           <Confirmation
             onConfirm={deleteKategori}
             text="Apakah anda yakin ingin menghapus kategori ini?"
+            className="flex-1"
           >
-            <Button type="button" color="error">
+            <Button className="w-full" type="button" color="error">
               Hapus
             </Button>
           </Confirmation>

@@ -2,7 +2,7 @@
 import { Ruangan } from "@/types/ruangan";
 import React from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { Button, Loading } from "react-daisyui";
+import { Button } from "react-daisyui";
 import { FaPlus } from "react-icons/fa";
 import { collection } from "firebase/firestore";
 import { db } from "@/services/firebase";

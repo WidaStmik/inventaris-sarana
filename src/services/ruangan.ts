@@ -1,5 +1,5 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Kategori, Ruangan } from "@/types/ruangan";
+import { Kategori, Ruangan, Sarana } from "@/types/ruangan";
 import { db, storage } from "./firebase";
 import {
   addDoc,
@@ -13,7 +13,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 export const ruanganApi = createApi({
   reducerPath: "ruanganApi",
   baseQuery: fakeBaseQuery(),
-  tagTypes: ["Ruangan", "Kategori"],
+  tagTypes: ["Ruangan", "Kategori", "Sarana"],
   endpoints: (build) => ({
     getRuangan: build.query({
       query: () => "ruangan",
@@ -95,6 +95,28 @@ export const ruanganApi = createApi({
         };
       },
     }),
+    addSarana: build.mutation<Sarana, Omit<Sarana, "id">>({
+      queryFn: async (arg) => {
+        const docRef = await addDoc(collection(db, "sarana"), arg);
+        return { data: { ...arg, id: docRef.id } };
+      },
+      invalidatesTags: ["Sarana"],
+    }),
+    updateSarana: build.mutation<Sarana, Sarana>({
+      queryFn: async (arg) => {
+        const { id, ...rest } = arg;
+        await updateDoc(doc(db, "sarana", id), rest);
+        return { data: arg };
+      },
+      invalidatesTags: ["Sarana"],
+    }),
+    deleteSarana: build.mutation<void, string>({
+      queryFn: async (id) => {
+        await deleteDoc(doc(db, "sarana", id));
+        return { data: undefined };
+      },
+      invalidatesTags: ["Sarana"],
+    }),
   }),
 });
 
@@ -107,4 +129,7 @@ export const {
   useDeleteRuanganMutation,
   useDeleteKategoriMutation,
   useUploadImagesMutation,
+  useAddSaranaMutation,
+  useUpdateSaranaMutation,
+  useDeleteSaranaMutation,
 } = ruanganApi;
