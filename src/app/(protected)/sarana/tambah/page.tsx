@@ -12,7 +12,6 @@ import toast from "react-hot-toast";
 
 const initial: Omit<Sarana, "id"> = {
   name: "",
-  sku: undefined,
   category: "",
 };
 

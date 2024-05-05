@@ -7,7 +7,7 @@ import {
   useUploadImagesMutation,
 } from "@/services/ruangan";
 import { PageProps } from "@/types/common";
-import { Kategori, Ruangan } from "@/types/ruangan";
+import { Kategori, Ruangan, Sarana, SaranaRuangan } from "@/types/ruangan";
 import { collection, doc } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -31,21 +31,26 @@ const initial: Ruangan = {
   name: "",
   code: "",
   category: "",
-  saranaCount: {
-    total: 0,
-    broken: 0,
-    good: 0,
-  },
-  images: undefined,
 };
+
+const initialSarana: SaranaRuangan[] = [];
 
 export default function EditRuangan(props: PageProps) {
   const [state, setState] = useState<Omit<Ruangan, "id">>(initial);
+  const [images, setImages] = useState<File[]>([]);
+  const [saranaRuangan, setSaranaRuangan] =
+    useState<SaranaRuangan[]>(initialSarana);
+
   const [snapshot, loading, error] = useDocument(
     doc(db, "ruangan", props.params.id)
   );
-  const [images, setImages] = useState<File[]>([]);
+
+  const [saranaRuanganSnapshot] = useCollection(
+    collection(db, "ruangan", props.params.id, "saranaRuangan")
+  );
+
   const [kategoriSnapshot] = useCollection(collection(db, "kategori"));
+  const [saranaSnapshot] = useCollection(collection(db, "sarana"));
 
   const kategori = useMemo(
     () =>
@@ -53,6 +58,11 @@ export default function EditRuangan(props: PageProps) {
         .filter((doc) => doc.data().kind === "ruangan")
         .map((doc) => doc.data()) as Kategori[],
     [kategoriSnapshot]
+  );
+
+  const sarana = useMemo(
+    () => saranaSnapshot?.docs.map((doc) => doc.data()) as Sarana[],
+    [saranaSnapshot]
   );
 
   const router = useRouter();
@@ -66,6 +76,15 @@ export default function EditRuangan(props: PageProps) {
     [snapshot]
   );
 
+  const saranaRuanganData = useMemo(
+    () =>
+      saranaRuanganSnapshot?.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as SaranaRuangan[],
+    [saranaRuanganSnapshot]
+  );
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -74,10 +93,6 @@ export default function EditRuangan(props: PageProps) {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,17 +137,22 @@ export default function EditRuangan(props: PageProps) {
     });
   };
 
-  const handleUpdate = async () => {
-    toast.promise(updateRuangan({ ...state, id: data.id }), {
-      loading: "Mengupdate ruangan...",
-      success: () => {
-        router.push("/ruangan");
-        return `Ruangan ${data.name} berhasil diupdate!, mengalihkan...`;
-      },
-      error: (error) => {
-        return `Gagal mengupdate ruangan: ${error.message}`;
-      },
-    });
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    toast.promise(
+      updateRuangan({ ...state, id: data.id, sarana: saranaRuangan }),
+      {
+        loading: "Mengupdate ruangan...",
+        success: () => {
+          router.push("/ruangan");
+          return `Ruangan ${data.name} berhasil diupdate!, mengalihkan...`;
+        },
+        error: (error) => {
+          return `Gagal mengupdate ruangan: ${error.message}`;
+        },
+      }
+    );
   };
 
   const mainImage = useMemo(
@@ -142,15 +162,15 @@ export default function EditRuangan(props: PageProps) {
 
   useEffect(() => {
     if (data) {
-      setState({
-        name: data.name,
-        code: data.code,
-        category: data.category,
-        saranaCount: data.saranaCount,
-        images: data.images,
-      });
+      setState(data);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (saranaRuanganData) {
+      setSaranaRuangan(saranaRuanganData);
+    }
+  }, [saranaRuanganData]);
 
   if (loading) return <Loading />;
   return (
@@ -159,7 +179,7 @@ export default function EditRuangan(props: PageProps) {
         Edit Ruangan <span className="text-primary">{data.name}</span>
       </h1>
 
-      <form className="flex flex-col" onSubmit={onSubmit}>
+      <form className="flex flex-col" onSubmit={handleUpdate}>
         <div className="flex flex-col">
           <label htmlFor="name">Nama Ruangan</label>
           <Input
@@ -203,6 +223,117 @@ export default function EditRuangan(props: PageProps) {
               Tambah Kategori
             </Link>
           </div>
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="sarana">Sarana Ruangan</label>
+
+          <div className="grid gap-1">
+            {saranaRuangan?.map((item, idx) => (
+              <div key={idx} className="flex flex-wrap lg:flex-nowrap gap-2">
+                <Select
+                  name="sarana"
+                  value={item.saranaId}
+                  onChange={(e) => {
+                    const { value } = e.target;
+
+                    // change use index to update the value
+                    setSaranaRuangan((prev) =>
+                      prev.map((s, i) =>
+                        i === idx ? { ...s, saranaId: value } : s
+                      )
+                    );
+                  }}
+                  required
+                  className="lg:w-5/6 w-full"
+                >
+                  <option value="">Pilih Sarana</option>
+                  {sarana?.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </Select>
+                <Input
+                  type="number"
+                  name="quantity"
+                  value={item.quantity}
+                  onChange={(e) => {
+                    const { value } = e.target;
+
+                    // remove leading zero
+                    if (value.startsWith("0")) {
+                      e.target.value = value.replace(/^0+/, "");
+                    }
+
+                    setSaranaRuangan((prev) =>
+                      prev.map((s, i) =>
+                        i === idx ? { ...s, quantity: +value } : s
+                      )
+                    );
+                  }}
+                  placeholder="Jumlah"
+                  required
+                  className="lg:w-1/12 w-2/5"
+                />
+                <Select
+                  name="condition"
+                  value={item.condition}
+                  onChange={(e) => {
+                    const { value } = e.target;
+                    setSaranaRuangan((prev) =>
+                      prev.map((s, i) =>
+                        i === idx
+                          ? { ...s, condition: value as "good" | "broken" }
+                          : s
+                      )
+                    );
+                  }}
+                  required
+                  className="lg:w-1/12 w-2/5"
+                >
+                  <option value="">Pilih Kondisi</option>
+                  <option value="good">Baik</option>
+                  <option value="broken">Rusak</option>
+                </Select>
+
+                <Tooltip message="Hapus Sarana">
+                  <Button
+                    type="button"
+                    color="error"
+                    onClick={() => {
+                      setSaranaRuangan((prev) =>
+                        prev.filter((s, i) => i !== idx)
+                      );
+                    }}
+                    className="w-full lg:w-auto"
+                  >
+                    <FaRegTrashCan />
+                  </Button>
+                </Tooltip>
+              </div>
+            ))}
+          </div>
+
+          <Button
+            type="button"
+            color="primary"
+            onClick={() => {
+              setSaranaRuangan((prev) => [
+                ...prev,
+                {
+                  id: "",
+                  ruanganId: data.id,
+                  saranaId: "",
+                  quantity: 0,
+                  condition: "good",
+                },
+              ]);
+            }}
+            className="mt-2"
+          >
+            Tambah Sarana
+          </Button>
         </div>
 
         <div className="flex flex-col">
@@ -349,9 +480,9 @@ export default function EditRuangan(props: PageProps) {
         <div className="flex gap-2 mt-4 w-full">
           <Button
             color="primary"
-            onClick={handleUpdate}
             loading={isLoading}
             className="flex-1"
+            type="submit"
           >
             Simpan
           </Button>

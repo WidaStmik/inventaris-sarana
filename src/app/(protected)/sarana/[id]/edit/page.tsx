@@ -130,7 +130,12 @@ export default function EditSarana(props: PageProps) {
             text="Apakah anda yakin ingin menghapus kategori ini?"
             className="flex-1"
           >
-            <Button className="w-full" type="button" color="error">
+            <Button
+              className="w-full"
+              type="button"
+              color="error"
+              loading={isDeleting}
+            >
               Hapus
             </Button>
           </Confirmation>

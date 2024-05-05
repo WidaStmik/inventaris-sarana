@@ -15,6 +15,14 @@ export interface Ruangan {
   }[];
 }
 
+export interface SaranaRuangan {
+  id: string;
+  ruanganId: string;
+  saranaId: string;
+  quantity: number;
+  condition: "good" | "broken";
+}
+
 export interface Kategori {
   id: string;
   name: string;

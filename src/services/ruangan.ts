@@ -1,5 +1,5 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Kategori, Ruangan, Sarana } from "@/types/ruangan";
+import { Kategori, Ruangan, Sarana, SaranaRuangan } from "@/types/ruangan";
 import { db, storage } from "./firebase";
 import {
   addDoc,
@@ -7,6 +7,7 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  writeBatch,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
@@ -26,10 +27,35 @@ export const ruanganApi = createApi({
       },
       invalidatesTags: ["Ruangan"],
     }),
-    updateRuangan: build.mutation<Ruangan, Ruangan>({
+    updateRuangan: build.mutation<
+      Ruangan,
+      Ruangan & {
+        sarana: (Omit<SaranaRuangan, "id"> & {
+          id?: string;
+        })[];
+      }
+    >({
       queryFn: async (arg) => {
-        const { id, ...rest } = arg;
-        await updateDoc(doc(db, "ruangan", id), rest);
+        const { id, sarana, ...rest } = arg;
+        const batch = writeBatch(db);
+
+        // update ruangan
+        const ruanganRef = doc(db, "ruangan", id);
+        batch.update(ruanganRef, rest);
+
+        // update sarana
+        const saranaRef = collection(db, "ruangan", id, "saranaRuangan");
+        sarana.forEach((s) => {
+          if (s.id) {
+            const saranaDocRef = doc(saranaRef, s.id);
+            batch.update(saranaDocRef, s);
+          } else {
+            const saranaDocRef = doc(saranaRef);
+            batch.set(saranaDocRef, s);
+          }
+        });
+
+        await batch.commit();
         return { data: arg };
       },
       invalidatesTags: ["Ruangan"],
