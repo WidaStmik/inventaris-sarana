@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { IoChevronBackCircleSharp } from "react-icons/io5";
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const pathname = usePathname();
 
   return (
