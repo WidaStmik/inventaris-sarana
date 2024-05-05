@@ -18,5 +18,15 @@ export interface Ruangan {
 export interface Kategori {
   id: string;
   name: string;
+  kind: "ruangan" | "sarana";
   description: string;
 }
+
+// export interface Sarana {
+//   id: string;
+//   name: string;
+//   code: string;
+//   category: string;
+//   condition: "good" | "broken";
+//   ruanganId: string;
+// }

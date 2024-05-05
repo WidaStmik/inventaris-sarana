@@ -3,12 +3,13 @@ import { useAddKategoriMutation } from "@/services/ruangan";
 import { Kategori } from "@/types/ruangan";
 import { redirect, useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { Button, Input } from "react-daisyui";
+import { Button, Input, Select } from "react-daisyui";
 import toast from "react-hot-toast";
 
 const initial: Omit<Kategori, "id"> = {
   name: "",
   description: "",
+  kind: "ruangan",
 };
 
 export default function TambahKategori() {
@@ -67,6 +68,19 @@ export default function TambahKategori() {
             onChange={handleChange}
             required
           />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="kind">Kategori untuk</label>
+          <Select
+            name="kind"
+            value={state.kind}
+            onChange={handleChange}
+            required
+          >
+            <option value="ruangan">Ruangan</option>
+            <option value="sarana">Sarana</option>
+          </Select>
         </div>
 
         <Button className="mt-4" color="primary" loading={isLoading}>

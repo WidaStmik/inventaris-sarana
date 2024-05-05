@@ -10,7 +10,7 @@ import { PageProps } from "@/types/common";
 import { Kategori } from "@/types/ruangan";
 import { doc } from "firebase/firestore";
 import React, { ReactPropTypes, useEffect, useMemo, useState } from "react";
-import { Button, Input } from "react-daisyui";
+import { Button, Input, Select } from "react-daisyui";
 import { useDocument, useDocumentData } from "react-firebase-hooks/firestore";
 import toast from "react-hot-toast";
 
@@ -64,7 +64,7 @@ export default function TambahKategori(props: PageProps) {
 
   return (
     <main>
-      <h1 className="text-3xl font-semibold">Tambah Kategori</h1>
+      <h1 className="text-3xl font-semibold">Edit Kategori</h1>
       <form className="flex flex-col" onSubmit={onSubmit}>
         <div className="flex flex-col">
           <label htmlFor="name">Nama Kategori</label>
@@ -86,6 +86,19 @@ export default function TambahKategori(props: PageProps) {
             onChange={handleChange}
             required
           />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="kind">Kategori untuk</label>
+          <Select
+            name="kind"
+            value={state.kind}
+            onChange={handleChange}
+            className="input"
+          >
+            <option value="ruangan">Ruangan</option>
+            <option value="sarana">Sarana</option>
+          </Select>
         </div>
 
         <div className="flex gap-2 items-center mt-4">
