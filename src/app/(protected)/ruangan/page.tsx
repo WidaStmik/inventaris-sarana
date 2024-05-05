@@ -29,19 +29,19 @@ const columns: TableColumn<Ruangan>[] = [
     selector: (row) => row.category,
   },
   {
-    name: "Jumlah Properti",
+    name: "Jumlah Sarana",
     width: "240px",
     cell(row, rowIndex, column, id) {
       return (
         <div className="flex items-center gap-2">
           <span className="text-green-500">
-            Bagus: {row.propertyCount?.good ?? 0}
+            Bagus: {row.saranaCount?.good ?? 0}
           </span>
           <span className="text-red-500">
-            Rusak: {row.propertyCount?.broken ?? 0}
+            Rusak: {row.saranaCount?.broken ?? 0}
           </span>
           <span className="text-blue-500">
-            Jumlah: {row.propertyCount?.total ?? 0}
+            Jumlah: {row.saranaCount?.total ?? 0}
           </span>
         </div>
       );

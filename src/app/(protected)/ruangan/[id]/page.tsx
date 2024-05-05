@@ -50,17 +50,17 @@ export default function RuanganPage(props: PageProps) {
           <RuanganInfo label="Kode Ruangan" value={data.code} />
           <RuanganInfo label="Kategori Ruangan" value={data.category} />
           <RuanganInfo
-            label="Jumlah Properti"
+            label="Jumlah Sarana"
             value={
               <div className="flex items-center gap-2">
                 <span className="text-green-500">
-                  Bagus: {data.propertyCount?.good ?? 0}
+                  Bagus: {data.saranaCount?.good ?? 0}
                 </span>
                 <span className="text-red-500">
-                  Rusak: {data.propertyCount?.broken ?? 0}
+                  Rusak: {data.saranaCount?.broken ?? 0}
                 </span>
                 <span className="text-blue-500">
-                  Jumlah: {data.propertyCount?.total ?? 0}
+                  Jumlah: {data.saranaCount?.total ?? 0}
                 </span>
               </div>
             }

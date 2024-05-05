@@ -3,7 +3,7 @@ export interface Ruangan {
   name: string;
   code: string;
   category: string;
-  propertyCount?: {
+  saranaCount?: {
     total: number;
     broken: number;
     good: number;

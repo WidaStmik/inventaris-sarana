@@ -31,7 +31,7 @@ const initial: Ruangan = {
   name: "",
   code: "",
   category: "",
-  propertyCount: {
+  saranaCount: {
     total: 0,
     broken: 0,
     good: 0,
@@ -141,7 +141,7 @@ export default function EditRuangan(props: PageProps) {
         name: data.name,
         code: data.code,
         category: data.category,
-        propertyCount: data.propertyCount,
+        saranaCount: data.saranaCount,
         images: data.images,
       });
     }
