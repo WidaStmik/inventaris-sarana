@@ -1,34 +1,47 @@
 "use client";
+import Confirmation from "@/components/common/confirmation";
+import Loading from "@/components/common/loading";
 import { db } from "@/services/firebase";
-import { useAddSaranaMutation } from "@/services/ruangan";
+import {
+  useDeleteSaranaMutation,
+  useUpdateSaranaMutation,
+} from "@/services/ruangan";
+import { PageProps } from "@/types/common";
 import { Kategori, Sarana } from "@/types/ruangan";
-import { collection } from "firebase/firestore";
+import { collection, doc } from "firebase/firestore";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button, Input, Select } from "react-daisyui";
-import { useCollection } from "react-firebase-hooks/firestore";
+import { useCollection, useDocument } from "react-firebase-hooks/firestore";
 import toast from "react-hot-toast";
 
-const initial: Omit<Sarana, "id"> = {
-  name: "",
-  sku: undefined,
-  category: "",
-};
+export default function EditSarana(props: PageProps) {
+  const [snapshot, loading, error] = useDocument(
+    doc(db, "sarana", props.params.id)
+  );
 
-export default function TambahSarana() {
-  const [state, setState] = useState<Omit<Sarana, "id">>(initial);
-  const [addSarana, { isLoading }] = useAddSaranaMutation();
-  const [snapshot, loading, error] = useCollection(collection(db, "kategori"));
+  const [kategoriSnapshot] = useCollection(collection(db, "kategori"));
   const kategori = useMemo(
     () =>
-      snapshot?.docs
+      kategoriSnapshot?.docs
         .filter((doc) => doc.data().kind === "sarana")
         .map((doc) => doc.data()) as Kategori[],
+    [kategoriSnapshot]
+  );
+
+  const data = useMemo(
+    () => ({ ...snapshot?.data(), id: snapshot?.id } as Sarana),
     [snapshot]
   );
 
-  const router = useRouter();
+  const [state, setState] = useState<Sarana>(data);
+  const [updateSarana, { isLoading }] = useUpdateSaranaMutation();
+  const [deleteSarana, { isLoading: isDeleting }] = useDeleteSaranaMutation();
+
+  useEffect(() => {
+    if (!data) return;
+    setState(data);
+  }, [data]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -42,13 +55,13 @@ export default function TambahSarana() {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast.promise(addSarana(state), {
-      loading: "Menambahkan sarana...",
-      success: (data) => {
-        setState(initial);
 
-        router.push("/sarana");
-        return `Sarana ${state.name} berhasil ditambahkan! mengalihkan...`;
+    toast.promise(updateSarana(state), {
+      loading: "Mengupdate sarana...",
+      success: (res) => {
+        setState(data);
+
+        return `Sarana ${state.name} berhasil update!`;
       },
       error: (error) => {
         return `Gagal menambahkan sarana: ${error.message}`;
@@ -56,9 +69,11 @@ export default function TambahSarana() {
     });
   };
 
+  if (loading) return <Loading />;
+
   return (
     <main>
-      <h1 className="text-3xl font-semibold">Tambah Sarana</h1>
+      <h1 className="text-3xl font-semibold">Edit Sarana</h1>
       <form className="flex flex-col" onSubmit={onSubmit}>
         <div className="flex flex-col">
           <label htmlFor="name">Nama Sarana</label>
@@ -105,9 +120,21 @@ export default function TambahSarana() {
           </div>
         </div>
 
-        <Button className="mt-4" color="primary" loading={isLoading}>
-          Tambah Sarana
-        </Button>
+        <div className="flex gap-2 items-center mt-4">
+          <Button className="flex-1" color="primary" loading={isLoading}>
+            Simpan
+          </Button>
+
+          <Confirmation
+            onConfirm={deleteSarana}
+            text="Apakah anda yakin ingin menghapus kategori ini?"
+            className="flex-1"
+          >
+            <Button className="w-full" type="button" color="error">
+              Hapus
+            </Button>
+          </Confirmation>
+        </div>
       </form>
     </main>
   );

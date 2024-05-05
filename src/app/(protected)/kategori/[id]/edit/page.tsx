@@ -14,7 +14,7 @@ import { Button, Input, Select } from "react-daisyui";
 import { useDocument, useDocumentData } from "react-firebase-hooks/firestore";
 import toast from "react-hot-toast";
 
-export default function TambahKategori(props: PageProps) {
+export default function EditKategori(props: PageProps) {
   const [snapshot, loading, error] = useDocument(
     doc(db, "kategori", props.params.id)
   );

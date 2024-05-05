@@ -46,9 +46,14 @@ export default function EditRuangan(props: PageProps) {
   );
   const [images, setImages] = useState<File[]>([]);
   const [kategoriSnapshot] = useCollection(collection(db, "kategori"));
-  const kategori = kategoriSnapshot?.docs.map((doc) =>
-    doc.data()
-  ) as Kategori[];
+
+  const kategori = useMemo(
+    () =>
+      kategoriSnapshot?.docs
+        .filter((doc) => doc.data().kind === "sarana")
+        .map((doc) => doc.data()) as Kategori[],
+    [kategoriSnapshot]
+  );
 
   const router = useRouter();
 
