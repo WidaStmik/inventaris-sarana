@@ -205,7 +205,7 @@ export default function EditRuangan(props: PageProps) {
           />
           <div className="flex flex-wrap gap-2 mt-4">
             {state.images?.map((img, i) => (
-              <div key={i} className="relative border rounded-xl shadow-md">
+              <div key={i} className="relative border">
                 <Image
                   src={img.url}
                   width={400}
@@ -245,8 +245,12 @@ export default function EditRuangan(props: PageProps) {
                 >
                   <FaRegTrashCan />
                 </Button>
-                <div className="absolute bottom-0 left-0 right-0 bg-gray-200 p-2 rounded-b-xl">
-                  {img.name}
+                <div className="absolute bottom-0 left-0 right-0 bg-gray-200 p-2 flex items-center justify-between">
+                  <span>{img.name}</span>
+
+                  {img.isHome && (
+                    <span className="text- text-primary">Gambar Utama</span>
+                  )}
                 </div>
               </div>
             ))}
