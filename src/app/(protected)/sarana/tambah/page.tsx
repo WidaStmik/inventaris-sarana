@@ -1,7 +1,7 @@
 "use client";
 import { db } from "@/services/firebase";
-import { useAddRuanganMutation } from "@/services/ruangan";
-import { Kategori, Ruangan } from "@/types/ruangan";
+import { useAddSaranaMutation } from "@/services/ruangan";
+import { Kategori, Sarana } from "@/types/ruangan";
 import { collection } from "firebase/firestore";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -10,23 +10,18 @@ import { Button, Input, Select } from "react-daisyui";
 import { useCollection } from "react-firebase-hooks/firestore";
 import toast from "react-hot-toast";
 
-const initial: Omit<Ruangan, "id"> = {
+const initial: Omit<Sarana, "id"> = {
   name: "",
-  code: "",
+  sku: undefined,
   category: "",
-  saranaCount: {
-    total: 0,
-    broken: 0,
-    good: 0,
-  },
 };
 
-export default function TambahRuangan() {
-  const [state, setState] = useState<Omit<Ruangan, "id">>(initial);
-  const [addRuangan, { isLoading }] = useAddRuanganMutation();
+export default function TambahSarana() {
+  const [state, setState] = useState<Omit<Sarana, "id">>(initial);
+  const [addSarana, { isLoading }] = useAddSaranaMutation();
   const [snapshot, loading, error] = useCollection(collection(db, "kategori"));
   const kategori = snapshot?.docs
-    .filter((doc) => doc.data().kind === "ruangan")
+    .filter((doc) => doc.data().kind === "sarana")
     .map((doc) => doc.data()) as Kategori[];
 
   const router = useRouter();
@@ -43,28 +38,28 @@ export default function TambahRuangan() {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast.promise(addRuangan(state), {
-      loading: "Menambahkan ruangan...",
+    toast.promise(addSarana(state), {
+      loading: "Menambahkan sarana...",
       success: (data) => {
         setState(initial);
 
-        router.push("/ruangan");
-        return `Ruangan ${state.name} berhasil ditambahkan! mengalihkan...`;
+        router.push("/sarana");
+        return `Sarana ${state.name} berhasil ditambahkan! mengalihkan...`;
       },
       error: (error) => {
-        return `Gagal menambahkan ruangan: ${error.message}`;
+        return `Gagal menambahkan sarana: ${error.message}`;
       },
     });
   };
 
   return (
     <main>
-      <h1 className="text-3xl font-semibold">Tambah Ruangan</h1>
+      <h1 className="text-3xl font-semibold">Tambah Sarana</h1>
       <form className="flex flex-col" onSubmit={onSubmit}>
         <div className="flex flex-col">
-          <label htmlFor="name">Nama Ruangan</label>
+          <label htmlFor="name">Nama Sarana</label>
           <Input
-            placeholder="Masukkan nama ruangan"
+            type="text"
             name="name"
             value={state.name}
             onChange={handleChange}
@@ -73,18 +68,17 @@ export default function TambahRuangan() {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="code">Kode Ruangan</label>
+          <label htmlFor="sku">SKU</label>
           <Input
-            placeholder="Masukkan kode ruangan"
-            name="code"
-            value={state.code}
+            type="text"
+            name="sku"
+            value={state.sku}
             onChange={handleChange}
-            required
           />
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="category">Kategori Ruangan</label>
+          <label htmlFor="category">Kategori Sarana</label>
           <div className="flex gap-2">
             <Select
               name="category"
@@ -93,8 +87,9 @@ export default function TambahRuangan() {
               required
               className="w-full"
             >
+              <option value="">Pilih Kategori</option>
               {kategori?.map((item) => (
-                <option key={item.id} value={item.id}>
+                <option key={item.id} value={item.name}>
                   {item.name}
                 </option>
               ))}
@@ -107,7 +102,7 @@ export default function TambahRuangan() {
         </div>
 
         <Button className="mt-4" color="primary" loading={isLoading}>
-          Tambah Ruangan
+          Tambah Sarana
         </Button>
       </form>
     </main>
