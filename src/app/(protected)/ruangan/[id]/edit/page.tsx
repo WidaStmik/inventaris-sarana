@@ -130,6 +130,11 @@ export default function EditRuangan(props: PageProps) {
     });
   };
 
+  const mainImage = useMemo(
+    () => state.images?.find((img) => img.isHome),
+    [state.images]
+  );
+
   useEffect(() => {
     if (data) {
       setState({
@@ -203,57 +208,90 @@ export default function EditRuangan(props: PageProps) {
             onChange={handleImageChange}
             color="primary"
           />
-          <div className="flex flex-wrap gap-2 mt-4">
-            {state.images?.map((img, i) => (
-              <div key={i} className="relative border">
-                <Image
-                  src={img.url}
-                  width={400}
-                  height={400}
-                  className="object-contain w-96"
-                  alt="Ruangan"
-                />
-                <Tooltip
-                  message="Gambar Utama"
-                  className="absolute top-2 left-2"
-                >
-                  <Toggle
-                    checked={img.isHome}
-                    onChange={(e) => {
-                      // set this image as home image, and remove the previous home image
-                      setState((prev) => ({
-                        ...prev,
-                        images: prev.images?.map((image) => ({
-                          ...image,
-                          isHome: image === img,
-                        })),
-                      }));
-                    }}
-                  />
-                </Tooltip>
-
-                <Button
-                  type="button"
-                  color="error"
-                  className="absolute top-2 right-2"
-                  onClick={() => {
+          {mainImage && (
+            <div className="relative border mt-2">
+              <Image
+                src={mainImage.url}
+                width={400}
+                height={400}
+                className="w-full object-contain"
+                alt="Ruangan"
+              />
+              <Tooltip message="Gambar Utama" className="absolute top-2 left-2">
+                <Toggle
+                  checked={mainImage.isHome}
+                  onChange={(e) => {
+                    // remove this image as home image
                     setState((prev) => ({
                       ...prev,
-                      images: prev.images?.filter((_, index) => index !== i),
+                      images: prev.images?.map((image) => ({
+                        ...image,
+                        isHome: false,
+                      })),
                     }));
                   }}
-                >
-                  <FaRegTrashCan />
-                </Button>
-                <div className="absolute bottom-0 left-0 right-0 bg-gray-200 p-2 flex items-center justify-between">
-                  <span>{img.name}</span>
+                />
+              </Tooltip>
+              <div className="absolute bottom-0 left-0 right-0 bg-gray-200 p-2 flex items-center justify-between">
+                <span>{mainImage.name}</span>
 
-                  {img.isHome && (
-                    <span className="text- text-primary">Gambar Utama</span>
-                  )}
-                </div>
+                <span className="text- text-primary">Gambar Utama</span>
               </div>
-            ))}
+            </div>
+          )}
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
+            {state.images
+              ?.filter((img) => !img.isHome)
+              .map((img, i) => (
+                <div key={i} className="relative border">
+                  <Image
+                    src={img.url}
+                    width={400}
+                    height={400}
+                    className="object-contain w-96"
+                    alt="Ruangan"
+                  />
+                  <Tooltip
+                    message="Gambar Utama"
+                    className="absolute top-2 left-2"
+                  >
+                    <Toggle
+                      checked={img.isHome}
+                      onChange={(e) => {
+                        // set this image as home image, and remove the previous home image
+                        setState((prev) => ({
+                          ...prev,
+                          images: prev.images?.map((image) => ({
+                            ...image,
+                            isHome: image === img,
+                          })),
+                        }));
+                      }}
+                    />
+                  </Tooltip>
+
+                  <Button
+                    type="button"
+                    color="error"
+                    className="absolute top-2 right-2"
+                    onClick={() => {
+                      setState((prev) => ({
+                        ...prev,
+                        images: prev.images?.filter((_, index) => index !== i),
+                      }));
+                    }}
+                  >
+                    <FaRegTrashCan />
+                  </Button>
+                  <div className="absolute bottom-0 left-0 right-0 bg-gray-200 p-2 flex items-center justify-between">
+                    <span>{img.name}</span>
+
+                    {img.isHome && (
+                      <span className="text- text-primary">Gambar Utama</span>
+                    )}
+                  </div>
+                </div>
+              ))}
             {images.map((img, i) => (
               <div key={i} className="relative border rounded-xl shadow-md">
                 <Image
