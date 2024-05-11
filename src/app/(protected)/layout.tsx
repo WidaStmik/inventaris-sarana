@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { ComponentProps } from "@/types/common";
 import Loading from "@/components/common/loading";
 
-import { redirect, useParams, usePathname, useRouter } from "next/navigation";
+import { redirect, useParams, usePathname } from "next/navigation";
 import Navbar from "@/components/common/navbar";
 import MobileNavbar from "@/components/common/mobile-navbar";
 import useUser from "../hooks/use-user";
@@ -14,7 +14,6 @@ import { replaceRoute } from "../helpers";
 export default function AuthLayout({ children }: ComponentProps) {
   const { user, loading, error } = useUser();
   const pathname = usePathname();
-  const router = useRouter();
   const params = useParams();
 
   const currentRoute = useMemo(
@@ -47,7 +46,6 @@ export default function AuthLayout({ children }: ComponentProps) {
       user?.customClaims?.role ?? Roles.User
     )
   ) {
-    console.log({ pathname, claims, user, router });
     return redirect("/404");
   }
 
