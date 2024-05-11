@@ -1,5 +1,7 @@
 "use client";
+import useUser from "@/app/hooks/use-user";
 import Loading from "@/components/common/loading";
+import { claims } from "@/paths";
 import { db } from "@/services/firebase";
 import { PageProps } from "@/types/common";
 import { Ruangan } from "@/types/ruangan";
@@ -16,6 +18,7 @@ export default function RuanganPage(props: PageProps) {
   const [snapshot, loading, error] = useDocument(
     doc(db, "ruangan", props.params.id)
   );
+  const { user } = useUser();
 
   const data = useMemo(
     () => ({ ...snapshot?.data(), id: snapshot?.id } as Ruangan),
@@ -35,11 +38,13 @@ export default function RuanganPage(props: PageProps) {
         <span>
           Ruangan <span className="font-semibold">{data.name}</span>
         </span>
-        <Tooltip message="Edit" position="bottom">
-          <Link href={`/ruangan/${data.id}/edit`} className="text-primary">
-            <FaEdit />
-          </Link>
-        </Tooltip>
+        {claims["/ruangan/[id]"].includes(user?.customClaims?.role) && (
+          <Tooltip message="Edit" position="bottom">
+            <Link href={`/ruangan/${data.id}/edit`} className="text-primary">
+              <FaEdit />
+            </Link>
+          </Tooltip>
+        )}
       </h1>
 
       <Divider />

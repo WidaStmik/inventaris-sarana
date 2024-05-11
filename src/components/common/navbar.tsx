@@ -1,5 +1,5 @@
 "use client";
-import { NAV_ITEMS } from "@/app/constants/navbar";
+import useNavItems from "@/app/hooks/use-nav-items";
 import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,6 +9,7 @@ import { IoChevronBackCircleSharp } from "react-icons/io5";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(true);
   const pathname = usePathname();
+  const { navItems } = useNavItems();
 
   return (
     <div
@@ -41,7 +42,7 @@ export default function Navbar() {
           isOpen ? "px-8" : "px-0"
         )}
       >
-        {NAV_ITEMS.map((item) => (
+        {navItems?.map((item) => (
           <Link
             href={item.href}
             key={item.text}

@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { ruanganApi } from "./ruangan";
+import { userApi } from "./user";
 
 export const store = configureStore({
   reducer: {
     [ruanganApi.reducerPath]: ruanganApi.reducer,
+    [userApi.reducerPath]: userApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(ruanganApi.middleware),
+    getDefaultMiddleware().concat(ruanganApi.middleware, userApi.middleware),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
