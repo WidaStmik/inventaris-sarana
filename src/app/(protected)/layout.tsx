@@ -3,18 +3,20 @@ import React, { useMemo } from "react";
 import { ComponentProps } from "@/types/common";
 import Loading from "@/components/common/loading";
 
-import { redirect, useParams, usePathname } from "next/navigation";
+import { redirect, useParams, usePathname, useRouter } from "next/navigation";
 import Navbar from "@/components/common/navbar";
 import MobileNavbar from "@/components/common/mobile-navbar";
 import useUser from "../hooks/use-user";
 import { claims } from "@/paths";
 import { Roles } from "../constants";
 import { replaceRoute } from "../helpers";
+import { IoChevronBackCircleSharp } from "react-icons/io5";
 
 export default function AuthLayout({ children }: ComponentProps) {
   const { user, loading, error } = useUser();
   const pathname = usePathname();
   const params = useParams();
+  const router = useRouter();
 
   const currentRoute = useMemo(
     () => replaceRoute(pathname, params),
@@ -54,8 +56,14 @@ export default function AuthLayout({ children }: ComponentProps) {
       <Navbar />
 
       <MobileNavbar />
-
       <div className="p-4 xl:p-8 overflow-y-auto max-h-screen w-full mb-16 lg:mb-0">
+        <div
+          className="flex items-center gap-1 mb-4 cursor-pointer"
+          onClick={() => router.back()}
+        >
+          <IoChevronBackCircleSharp className="text-3xl text-primary" />
+          <span className="text-2xl">Kembali</span>
+        </div>
         {children}
       </div>
     </div>

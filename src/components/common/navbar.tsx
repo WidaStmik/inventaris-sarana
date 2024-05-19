@@ -4,7 +4,7 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
-import { IoChevronBackCircleSharp } from "react-icons/io5";
+import { IoMenuOutline } from "react-icons/io5";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(true);
@@ -23,11 +23,10 @@ export default function Navbar() {
       <div
         className={clsx(
           "absolute top-0 right-0 w-16 h-16 bg-gray-50 flex items-center justify-center",
-          "transition-all duration-300 ease-in-out",
-          !isOpen ? "rotate-180" : ""
+          "transition-all duration-300 ease-in-out"
         )}
       >
-        <IoChevronBackCircleSharp
+        <IoMenuOutline
           className="text-4xl cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
         />
