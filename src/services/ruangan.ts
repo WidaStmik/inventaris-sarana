@@ -6,6 +6,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
   updateDoc,
   writeBatch,
 } from "firebase/firestore";
@@ -37,22 +38,26 @@ export const ruanganApi = createApi({
     >({
       queryFn: async (arg) => {
         const { id, sarana, ...rest } = arg;
-        const batch = writeBatch(db);
+        const preBatch = writeBatch(db);
 
         // update ruangan
         const ruanganRef = doc(db, "ruangan", id);
-        batch.update(ruanganRef, rest);
+        preBatch.update(ruanganRef, rest);
 
-        // update sarana
-        const saranaRef = collection(db, "ruangan", id, "saranaRuangan");
+        // delete entire collection
+        const ref = collection(db, "ruangan", id, "saranaRuangan");
+        const saranaSnap = await getDocs(ref);
+
+        saranaSnap.forEach((doc) => {
+          preBatch.delete(doc.ref);
+        });
+
+        await preBatch.commit();
+
+        const batch = writeBatch(db);
+        // save new data
         sarana.forEach((s) => {
-          if (s.id) {
-            const saranaDocRef = doc(saranaRef, s.id);
-            batch.update(saranaDocRef, s);
-          } else {
-            const saranaDocRef = doc(saranaRef);
-            batch.set(saranaDocRef, s);
-          }
+          batch.set(doc(ref), s);
         });
 
         await batch.commit();

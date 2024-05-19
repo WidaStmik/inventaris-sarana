@@ -9,6 +9,7 @@ import {
 import { PageProps } from "@/types/common";
 import { Kategori, Ruangan, Sarana, SaranaRuangan } from "@/types/ruangan";
 import { collection, doc } from "firebase/firestore";
+import _ from "lodash";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
@@ -32,6 +33,8 @@ const initial: Ruangan = {
   code: "",
   category: "",
 };
+
+type SaranaData = SaranaRuangan & Sarana;
 
 const initialSarana: SaranaRuangan[] = [];
 
@@ -61,7 +64,11 @@ export default function EditRuangan(props: PageProps) {
   );
 
   const sarana = useMemo(
-    () => saranaSnapshot?.docs.map((doc) => doc.data()) as Sarana[],
+    () =>
+      saranaSnapshot?.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as Sarana[],
     [saranaSnapshot]
   );
 
@@ -75,15 +82,23 @@ export default function EditRuangan(props: PageProps) {
     () => ({ ...snapshot?.data(), id: snapshot?.id } as Ruangan),
     [snapshot]
   );
+  const saranaRuanganData = useMemo(() => {
+    const ungrouped = saranaRuanganSnapshot?.docs.map((doc) => {
+      const saranaData = sarana?.find(
+        (s) => s.id === doc.data().saranaId
+      ) as Sarana;
 
-  const saranaRuanganData = useMemo(
-    () =>
-      saranaRuanganSnapshot?.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      })) as SaranaRuangan[],
-    [saranaRuanganSnapshot]
-  );
+      return { ...doc.data(), ...saranaData, id: doc.id } as SaranaData;
+    });
+
+    // group by saranaId and condition
+    const grouped = _.groupBy(ungrouped, (s) => `${s.saranaId}-${s.condition}`);
+
+    return Object.values(grouped).map((s) => ({
+      ...s[0],
+      quantity: s.reduce((acc, s) => acc + s.quantity, 0),
+    })) as SaranaRuangan[];
+  }, [sarana]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

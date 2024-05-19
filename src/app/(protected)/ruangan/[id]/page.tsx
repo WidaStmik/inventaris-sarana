@@ -4,25 +4,75 @@ import Loading from "@/components/common/loading";
 import { claims } from "@/paths";
 import { db } from "@/services/firebase";
 import { PageProps } from "@/types/common";
-import { Ruangan } from "@/types/ruangan";
+import { Ruangan, Sarana, SaranaRuangan } from "@/types/ruangan";
 import clsx from "clsx";
-import { doc } from "firebase/firestore";
+import { collection, doc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useMemo } from "react";
 import { Button, Divider, Tooltip } from "react-daisyui";
-import { useDocument } from "react-firebase-hooks/firestore";
+import { useCollection, useDocument } from "react-firebase-hooks/firestore";
 import { FaEdit } from "react-icons/fa";
 
+import _ from "lodash";
+
+type SaranaData = SaranaRuangan & Sarana;
+
 export default function RuanganPage(props: PageProps) {
-  const [snapshot, loading, error] = useDocument(
-    doc(db, "ruangan", props.params.id)
+  const [snapshot, loading] = useDocument(doc(db, "ruangan", props.params.id));
+
+  const [saranaSnap] = useCollection(
+    collection(db, "ruangan", props.params.id, "saranaRuangan")
   );
+
+  const [saranaSnapshot] = useCollection(collection(db, "sarana"));
+  const sarana = useMemo(
+    () =>
+      saranaSnapshot?.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as Sarana[],
+    [saranaSnapshot]
+  );
+
   const { user } = useUser();
 
+  const saranaRuangan = useMemo(() => {
+    const ungrouped = saranaSnap?.docs.map((doc) => {
+      const saranaData = sarana?.find(
+        (s) => s.id === doc.data().saranaId
+      ) as Sarana;
+
+      return { ...doc.data(), ...saranaData, id: doc.id } as SaranaData;
+    });
+
+    // group by saranaId and condition
+    const grouped = _.groupBy(ungrouped, (s) => `${s.saranaId}-${s.condition}`);
+
+    return Object.values(grouped).map((s) => ({
+      ...s[0],
+      quantity: s.reduce((acc, s) => acc + s.quantity, 0),
+    })) as SaranaData[];
+  }, [saranaSnap]);
+
   const data = useMemo(
-    () => ({ ...snapshot?.data(), id: snapshot?.id } as Ruangan),
-    [snapshot]
+    () =>
+      ({
+        ...snapshot?.data(),
+        id: snapshot?.id,
+        saranaCount: {
+          total: saranaRuangan?.reduce((acc, s) => acc + s.quantity, 0),
+          broken: saranaRuangan?.reduce(
+            (acc, s) => (s.condition === "broken" ? acc + s.quantity : acc),
+            0
+          ),
+          good: saranaRuangan?.reduce(
+            (acc, s) => (s.condition === "good" ? acc + s.quantity : acc),
+            0
+          ),
+        },
+      } as Ruangan),
+    [snapshot, saranaRuangan]
   );
 
   const mainImage = useMemo(
@@ -67,6 +117,28 @@ export default function RuanganPage(props: PageProps) {
                 <span className="text-blue-500">
                   Jumlah: {data.saranaCount?.total ?? 0}
                 </span>
+              </div>
+            }
+          />
+          <RuanganInfo
+            label="Sarana"
+            value={
+              <div className="flex flex-col gap-2">
+                {saranaRuangan?.map((s, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span
+                      className={clsx("text-sm badge", {
+                        "badge-success": s.condition === "good",
+                        "badge-error": s.condition === "broken",
+                      })}
+                    >
+                      {s.condition === "good" ? "Bagus" : "Rusak"}
+                    </span>
+                    <span>
+                      {s.quantity}x {s.name}
+                    </span>
+                  </div>
+                ))}
               </div>
             }
           />
