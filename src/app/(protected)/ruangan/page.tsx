@@ -1,10 +1,10 @@
 "use client";
-import { Ruangan } from "@/types/ruangan";
-import React from "react";
+import { Ruangan, Sarana, SaranaRuangan } from "@/types/ruangan";
+import React, { useMemo } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { Button } from "react-daisyui";
 import { FaPlus } from "react-icons/fa";
-import { collection } from "firebase/firestore";
+import { collection, collectionGroup } from "firebase/firestore";
 import { db } from "@/services/firebase";
 import { useCollection } from "react-firebase-hooks/firestore";
 import Link from "next/link";
@@ -12,13 +12,71 @@ import { useGetUserQuery } from "@/services/user";
 import useToken from "@/app/hooks/use-token";
 import { Roles } from "@/app/constants";
 import { claims } from "@/paths";
+import _ from "lodash";
+
+type SaranaData = Sarana & SaranaRuangan;
 
 export default function DaftarRuangan() {
   const [snapshot, loading, error] = useCollection(collection(db, "ruangan"));
-  const data = snapshot?.docs.map((doc) => ({
-    ...doc.data(),
-    id: doc.id,
-  })) as Ruangan[];
+  const [saranaSnap] = useCollection(collectionGroup(db, "saranaRuangan"));
+
+  const [saranaSnapshot] = useCollection(collection(db, "sarana"));
+  const sarana = useMemo(
+    () =>
+      saranaSnapshot?.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as Sarana[],
+    [saranaSnapshot]
+  );
+
+  const saranaRuangan = useMemo(() => {
+    const ungrouped = saranaSnap?.docs.map((doc) => {
+      const saranaData = sarana?.find(
+        (s) => s.id === doc.data().saranaId
+      ) as Sarana;
+
+      return { ...doc.data(), ...saranaData, id: doc.id } as SaranaData;
+    });
+
+    // group by saranaId, condition, and ruanganId
+    const grouped = _.groupBy(
+      ungrouped,
+      (s) => `${s.saranaId}-${s.condition}-${s.ruanganId}`
+    );
+
+    return Object.values(grouped).map((s) => ({
+      ...s[0],
+      quantity: s.reduce((acc, s) => acc + s.quantity, 0),
+    })) as SaranaData[];
+  }, [saranaSnap]);
+
+  const data = useMemo(
+    () =>
+      snapshot?.docs.map((doc) => {
+        const saranaCount = saranaRuangan
+          ?.filter((s) => s.ruanganId === doc.id)
+          .reduce(
+            (acc, s) => {
+              if (s.condition === "good") {
+                acc.good += s.quantity;
+              } else {
+                acc.broken += s.quantity;
+              }
+              acc.total += s.quantity;
+              return acc;
+            },
+            { good: 0, broken: 0, total: 0 }
+          );
+
+        return {
+          ...doc.data(),
+          id: doc.id,
+          saranaCount,
+        } as Ruangan;
+      }),
+    [snapshot, saranaRuangan]
+  );
 
   const { token } = useToken();
   const { data: user } = useGetUserQuery(token!, { skip: !token });
@@ -44,19 +102,15 @@ export default function DaftarRuangan() {
     },
     {
       name: "Jumlah Sarana",
-      width: "240px",
+      width: "200px",
       cell(row, rowIndex, column, id) {
         return (
           <div className="flex items-center gap-2">
-            <span className="text-green-500">
-              Bagus: {row.saranaCount?.good ?? 0}
-            </span>
-            <span className="text-red-500">
-              Rusak: {row.saranaCount?.broken ?? 0}
-            </span>
-            <span className="text-blue-500">
-              Jumlah: {row.saranaCount?.total ?? 0}
-            </span>
+            <span className="text-green-500">{row.saranaCount?.good ?? 0}</span>
+            <span>+</span>
+            <span className="text-red-500">{row.saranaCount?.broken ?? 0}</span>
+            <span>=</span>
+            <span className="text-blue-500">{row.saranaCount?.total ?? 0}</span>
           </div>
         );
       },
