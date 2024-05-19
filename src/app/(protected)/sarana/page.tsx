@@ -54,12 +54,14 @@ export default function DaftarSarana() {
 
   return (
     <div>
-      <h1 className="text-3xl font-semibold">Daftar Sarana</h1>
-      <Link href="/sarana/tambah">
-        <Button color="primary" startIcon={<FaPlus />}>
-          Tambah Sarana
-        </Button>
-      </Link>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        <h1 className="text-3xl font-semibold">Daftar Sarana</h1>
+        <Link href="/sarana/tambah">
+          <Button color="primary" startIcon={<FaPlus />}>
+            Tambah Sarana
+          </Button>
+        </Link>
+      </div>
       <div className="mt-4">
         <DataTable
           progressPending={loading}
