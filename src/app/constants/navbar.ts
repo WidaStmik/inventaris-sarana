@@ -1,7 +1,7 @@
 import {
   AiTwotoneAppstore,
   AiTwotoneCheckSquare,
-  AiTwotoneHdd,
+  AiTwotoneLayout,
   AiTwotoneHome,
 } from "react-icons/ai";
 
@@ -14,7 +14,7 @@ export const NAV_ITEMS = [
   {
     text: "Daftar Ruangan",
     href: "/ruangan",
-    Icon: AiTwotoneHdd,
+    Icon: AiTwotoneLayout,
   },
   {
     text: "Daftar Kategori",
