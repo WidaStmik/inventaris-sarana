@@ -160,7 +160,7 @@ export default function RuanganPage(props: PageProps) {
                       className="w-full object-contain"
                       alt="Ruangan"
                     />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gray-200 p-2 flex items-center justify-between">
+                    <div className="absolute bottom-0 left-0 right-0 bg-base-300 p-2 flex items-center justify-between">
                       <span>{mainImage.name}</span>
 
                       <span className="text- text-primary">Gambar Utama</span>
@@ -183,7 +183,7 @@ export default function RuanganPage(props: PageProps) {
                           alt="Ruangan"
                         />
 
-                        <div className="absolute bottom-0 left-0 right-0 bg-gray-200 p-2 flex items-center justify-between">
+                        <div className="absolute bottom-0 left-0 right-0 bg-base-300 p-2 flex items-center justify-between">
                           <span>{img.name}</span>
 
                           {img.isHome && (

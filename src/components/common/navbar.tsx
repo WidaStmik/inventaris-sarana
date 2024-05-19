@@ -15,7 +15,7 @@ export default function Navbar() {
   return (
     <div
       className={clsx(
-        "hidden lg:flex bg-gray-50 h-screen shadow-lg relative",
+        "hidden lg:flex bg-base-100 h-screen shadow-lg relative",
         "transition-all duration-300 ease-in-out overflow-hidden",
         "flex-col items-center z-10",
         isOpen ? "w-96" : "w-16"
@@ -23,7 +23,7 @@ export default function Navbar() {
     >
       <div
         className={clsx(
-          "absolute top-0 right-0 w-16 h-16 bg-gray-50 flex items-center justify-center",
+          "absolute top-0 right-0 w-16 h-16 bg-base-100 flex items-center justify-center",
           "transition-all duration-300 ease-in-out"
         )}
       >

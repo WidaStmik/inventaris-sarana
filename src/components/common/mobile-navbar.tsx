@@ -12,7 +12,7 @@ export default function MobileNavbar() {
   const { navItems } = useNavItems();
 
   return (
-    <div className="px-16 fixed z-[10] bottom-0 w-screen h-16 border bg-gray-50 flex items-center justify-around lg:hidden">
+    <div className="px-16 fixed z-[10] bottom-0 w-screen h-16 border bg-base-100 flex items-center justify-around lg:hidden">
       {navItems?.map((item) => (
         <Link
           href={item.href}

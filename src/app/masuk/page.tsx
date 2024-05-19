@@ -40,8 +40,8 @@ export default function Masuk() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen lg:px-16 xl:px-24 lg:bg-gray-50">
-      <Card className="w-full lg:w-1/2 bg-white border-0 lg:border lg:shadow-lg">
+    <div className="flex flex-col items-center justify-center h-screen lg:px-16 xl:px-24 lg:bg-base-100">
+      <Card className="w-full lg:w-1/2 bg-base-100 border-0 lg:border lg:shadow-lg">
         <Card.Body>
           <Image
             src="/logo.jpg"

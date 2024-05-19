@@ -383,7 +383,7 @@ export default function EditRuangan(props: PageProps) {
                   }}
                 />
               </Tooltip>
-              <div className="absolute bottom-0 left-0 right-0 bg-gray-200 p-2 flex items-center justify-between">
+              <div className="absolute bottom-0 left-0 right-0 bg-base-300 p-2 flex items-center justify-between">
                 <span>{mainImage.name}</span>
 
                 <span className="text- text-primary">Gambar Utama</span>
@@ -434,7 +434,7 @@ export default function EditRuangan(props: PageProps) {
                   >
                     <FaRegTrashCan />
                   </Button>
-                  <div className="absolute bottom-0 left-0 right-0 bg-gray-200 p-2 flex items-center justify-between">
+                  <div className="absolute bottom-0 left-0 right-0 bg-base-300 p-2 flex items-center justify-between">
                     <span>{img.name}</span>
 
                     {img.isHome && (
@@ -469,7 +469,7 @@ export default function EditRuangan(props: PageProps) {
                 >
                   <FaRegTrashCan />
                 </Button>
-                <div className="absolute bottom-0 left-0 right-0 bg-gray-200 p-2 rounded-b-xl">
+                <div className="absolute bottom-0 left-0 right-0 bg-base-300 p-2 rounded-b-xl">
                   {img.name}
                   <span className="text-xs text-gray-500 ml-2">
                     ({(img.size / 1024).toFixed(2)} KB)
