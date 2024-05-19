@@ -3,6 +3,7 @@ import {
   AiTwotoneSetting,
   AiTwotoneLayout,
   AiTwotoneHome,
+  AiTwotoneReconciliation,
 } from "react-icons/ai";
 
 export const NAV_ITEMS = [
@@ -25,5 +26,15 @@ export const NAV_ITEMS = [
     text: "Daftar Sarana",
     href: "/sarana",
     Icon: AiTwotoneSetting,
+  },
+  {
+    text: "Pengajuan",
+    href: "/pengajuan",
+    Icon: AiTwotoneReconciliation,
+  },
+  {
+    text: "Daftar Pengajuan",
+    href: "/daftar-pengajuan",
+    Icon: AiTwotoneReconciliation,
   },
 ];
