@@ -1,27 +1,29 @@
-import { GoHome } from "react-icons/go";
-import { LiaToolsSolid } from "react-icons/lia";
-import { MdOutlineBackupTable, MdOutlineCategory } from "react-icons/md";
-import { Roles } from ".";
+import {
+  AiTwotoneAppstore,
+  AiTwotoneCheckSquare,
+  AiTwotoneHdd,
+  AiTwotoneHome,
+} from "react-icons/ai";
 
 export const NAV_ITEMS = [
   {
     text: "Home",
     href: "/",
-    Icon: GoHome,
+    Icon: AiTwotoneHome,
   },
   {
     text: "Daftar Ruangan",
     href: "/ruangan",
-    Icon: MdOutlineBackupTable,
+    Icon: AiTwotoneHdd,
   },
   {
     text: "Daftar Kategori",
     href: "/kategori",
-    Icon: MdOutlineCategory,
+    Icon: AiTwotoneAppstore,
   },
   {
     text: "Daftar Sarana",
     href: "/sarana",
-    Icon: LiaToolsSolid,
+    Icon: AiTwotoneCheckSquare,
   },
 ];

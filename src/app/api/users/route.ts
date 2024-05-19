@@ -1,3 +1,4 @@
+import { Roles } from "@/app/constants";
 import { app } from "@/services/admin";
 import { getAuth } from "firebase-admin/auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest) {
     const { uid } = await auth.verifyIdToken(token);
     const user = await auth.getUser(uid);
 
-    if (user.customClaims?.role !== "admin") {
+    if (user.customClaims?.role !== Roles.Admin) {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
