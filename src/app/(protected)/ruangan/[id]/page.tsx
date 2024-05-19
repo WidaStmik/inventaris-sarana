@@ -109,15 +109,15 @@ export default function RuanganPage(props: PageProps) {
             unSpan
             value={
               <div className="flex items-center gap-2">
-                <span className="text-green-500">
+                <span className="text-success">
                   {data.saranaCount?.good ?? 0}
                 </span>
                 <span>+</span>
-                <span className="text-red-500">
+                <span className="text-error">
                   {data.saranaCount?.broken ?? 0}
                 </span>
                 <span>=</span>
-                <span className="text-blue-500">
+                <span className="text-primary">
                   {data.saranaCount?.total ?? 0}
                 </span>
               </div>

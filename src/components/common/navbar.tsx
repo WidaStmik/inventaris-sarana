@@ -58,7 +58,7 @@ export default function Navbar() {
               "flex items-center",
               "transition-all duration-300 ease-in-out",
               isOpen ? "w-full justify-start" : "w-16 justify-center",
-              pathname === item.href ? "text-blue-700" : "text-gray-500"
+              pathname === item.href ? "text-primary" : "text-gray-500"
             )}
           >
             <item.Icon className={clsx("text-4xl")} />

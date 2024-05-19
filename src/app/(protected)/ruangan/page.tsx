@@ -106,11 +106,11 @@ export default function DaftarRuangan() {
       cell(row, rowIndex, column, id) {
         return (
           <div className="flex items-center gap-2">
-            <span className="text-green-500">{row.saranaCount?.good ?? 0}</span>
+            <span className="text-success">{row.saranaCount?.good ?? 0}</span>
             <span>+</span>
-            <span className="text-red-500">{row.saranaCount?.broken ?? 0}</span>
+            <span className="text-error">{row.saranaCount?.broken ?? 0}</span>
             <span>=</span>
-            <span className="text-blue-500">{row.saranaCount?.total ?? 0}</span>
+            <span className="text-primary">{row.saranaCount?.total ?? 0}</span>
           </div>
         );
       },

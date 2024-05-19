@@ -22,7 +22,7 @@ export default function MobileNavbar() {
           <item.Icon
             className={clsx(
               "text-4xl",
-              pathname === item.href ? "text-blue-700" : "text-gray-500"
+              pathname === item.href ? "text-primary" : "text-gray-500"
             )}
           />
         </Link>
