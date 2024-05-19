@@ -11,6 +11,7 @@ import { claims } from "@/paths";
 import { Roles } from "../constants";
 import { replaceRoute } from "../helpers";
 import { IoChevronBackCircleSharp } from "react-icons/io5";
+import MainNav from "@/components/common/main-nav";
 
 export default function AuthLayout({ children }: ComponentProps) {
   const { user, loading, error } = useUser();
@@ -54,9 +55,9 @@ export default function AuthLayout({ children }: ComponentProps) {
   return (
     <div className="flex">
       <Navbar />
-
       <MobileNavbar />
-      <div className="p-4 xl:p-8 overflow-y-auto max-h-screen w-full mb-16 lg:mb-0">
+      <MainNav />
+      <div className="p-4 xl:p-8 overflow-y-auto max-h-screen w-full mb-16 lg:mb-0 mt-10">
         <div
           className="flex items-center gap-1 mb-4 cursor-pointer"
           onClick={() => router.back()}

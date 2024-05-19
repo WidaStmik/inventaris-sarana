@@ -1,6 +1,7 @@
 "use client";
 import useNavItems from "@/app/hooks/use-nav-items";
 import clsx from "clsx";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
@@ -16,7 +17,7 @@ export default function Navbar() {
       className={clsx(
         "hidden lg:flex bg-gray-50 h-screen shadow-lg relative",
         "transition-all duration-300 ease-in-out overflow-hidden",
-        "flex-col items-center",
+        "flex-col items-center z-10",
         isOpen ? "w-96" : "w-16"
       )}
     >
@@ -32,7 +33,15 @@ export default function Navbar() {
         />
       </div>
 
-      <div className="mt-16">Logo</div>
+      <div className={clsx("mt-16", { "mx-3": !isOpen })}>
+        <Image
+          src="/logo.jpg"
+          height={144}
+          width={144}
+          className="block mx-auto"
+          alt="Logo SMK Pasundan 2"
+        />
+      </div>
 
       <div
         className={clsx(
