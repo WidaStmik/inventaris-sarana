@@ -13,8 +13,11 @@ import React, { useMemo } from "react";
 import { Button, Divider, Tooltip } from "react-daisyui";
 import { useCollection, useDocument } from "react-firebase-hooks/firestore";
 import { FaEdit } from "react-icons/fa";
+import { PiMicrosoftExcelLogoDuotone } from "react-icons/pi";
+import ExcelJs from "exceljs";
 
 import _ from "lodash";
+import { getBucketPath, getBufferFromPath } from "@/app/helpers";
 
 type SaranaData = SaranaRuangan & Sarana;
 
@@ -80,25 +83,122 @@ export default function RuanganPage(props: PageProps) {
     [data.images]
   );
 
+  const handlePrint = async () => {
+    const workbook = new ExcelJs.Workbook();
+    const worksheet = workbook.addWorksheet("Ruangan");
+
+    worksheet.columns = [
+      { width: 20 },
+      { width: 50 },
+      { width: 20 },
+      { width: 20 },
+    ];
+    worksheet.mergeCells("A1:D1");
+    worksheet.getCell("A1").value = "Detail Ruangan";
+    worksheet.getCell("A1").alignment = { horizontal: "center" };
+    worksheet.getCell("A1").font = { bold: true };
+
+    worksheet.addRow(["Nama Ruangan", data.name]);
+    worksheet.addRow(["Kode Ruangan", data.code]);
+    worksheet.addRow(["Kategori Ruangan", data.category]);
+    worksheet.addRow(["Jumlah Sarana", data.saranaCount?.total]);
+
+    worksheet.addRow([]);
+    worksheet.mergeCells("A7:D7");
+    worksheet.getCell("A7").value = "Sarana";
+    worksheet.getCell("A7").alignment = { horizontal: "center" };
+    worksheet.getCell("A7").font = { bold: true };
+
+    worksheet.addRow(["SKU", "Nama Sarana", "Kondisi", "Jumlah"]);
+    saranaRuangan?.forEach((s, i) => {
+      worksheet.addRow([
+        s.sku,
+        s.name,
+        s.condition === "good" ? "Bagus" : "Rusak",
+        s.quantity,
+      ]);
+    });
+
+    // add images
+    worksheet.addRow([]);
+    worksheet.addRow([]);
+
+    let currentRow = worksheet.rowCount;
+    worksheet.mergeCells(`A${currentRow}:D${currentRow}`);
+    worksheet.getCell(`A${currentRow}`).value = "Gambar Ruangan";
+    worksheet.getCell(`A${currentRow}`).alignment = { horizontal: "center" };
+    worksheet.getCell(`A${currentRow}`).font = { bold: true };
+
+    currentRow++;
+
+    const imagePaths = data.images?.map((img) => getBucketPath(img.url)) ?? [];
+    const images = await Promise.all(
+      imagePaths.map(async (path) => getBufferFromPath(path))
+    );
+
+    for (const image of images) {
+      const img = workbook.addImage({
+        buffer: image,
+        extension: "png",
+      });
+
+      const row = worksheet.getRow(currentRow);
+      worksheet.mergeCells(`A${currentRow}:D${currentRow}`);
+      row.height = 400;
+
+      worksheet.addImage(img, `A${currentRow}:D${currentRow}`);
+      currentRow++;
+    }
+
+    // set all font size to 12
+    worksheet.eachRow((row) => {
+      row.eachCell((cell) => {
+        cell.font = { ...cell.font, size: 12 };
+      });
+    });
+
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${data.name}.xlsx`;
+      a.click();
+    });
+  };
+
   if (loading) return <Loading />;
 
   return (
     <div>
-      <h1 className="text-3xl flex items-center gap-2">
-        <span>
-          Ruangan <span className="font-semibold">{data.name}</span>
-        </span>
-        {claims["/ruangan/[id]"].includes(user?.customClaims?.role) && (
-          <Tooltip message="Edit" position="bottom">
-            <Link href={`/ruangan/${data.id}/edit`} className="text-primary">
-              <FaEdit />
-            </Link>
-          </Tooltip>
-        )}
-      </h1>
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+        <h1 className="text-3xl flex items-center gap-2">
+          <span>
+            Ruangan <span className="font-semibold">{data.name}</span>
+          </span>
+          {claims["/ruangan/[id]"].includes(user?.customClaims?.role) && (
+            <Tooltip message="Edit" position="bottom">
+              <Link href={`/ruangan/${data.id}/edit`} className="text-primary">
+                <FaEdit />
+              </Link>
+            </Tooltip>
+          )}
+        </h1>
+
+        <Button
+          endIcon={<PiMicrosoftExcelLogoDuotone size={25} />}
+          color="primary"
+          onClick={handlePrint}
+          className="w-full xl:w-auto"
+        >
+          Download
+        </Button>
+      </div>
 
       <Divider />
-
       <table className="table w-full">
         <tbody>
           <RuanganInfo label="Nama Ruangan" value={data.name} />
