@@ -80,6 +80,13 @@ export default function PengajuanPage() {
       },
     },
     {
+      name: "Pesan",
+      cell(row) {
+        return <span className="text-wrap">{row.message}</span>;
+      },
+      width: "200px",
+    },
+    {
       name: "Tanggal",
       selector: (row) => row.createdAt.toDate().toLocaleDateString(),
       sortable: true,

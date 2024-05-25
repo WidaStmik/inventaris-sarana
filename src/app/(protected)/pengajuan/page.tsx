@@ -97,6 +97,13 @@ export default function PengajuanPage() {
       },
     },
     {
+      name: "Pesan",
+      cell(row) {
+        return <span className="text-wrap">{row.message}</span>;
+      },
+      width: "200px",
+    },
+    {
       name: "Aksi",
       width: "200px",
       cell(row, rowIndex, column, id) {

@@ -47,4 +47,5 @@ export interface Pengajuan {
   status: "pending" | "approved" | "rejected" | "canceled";
   createdAt: Timestamp;
   userId: string;
+  message: string;
 }

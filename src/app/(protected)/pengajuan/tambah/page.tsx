@@ -5,7 +5,7 @@ import { Kategori, Pengajuan, Ruangan, Sarana } from "@/types/ruangan";
 import { collection, Timestamp } from "firebase/firestore";
 import { redirect, useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { Button, Input, Select } from "react-daisyui";
+import { Button, Input, Select, Textarea } from "react-daisyui";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 import toast from "react-hot-toast";
@@ -17,6 +17,7 @@ const initial: Omit<Pengajuan, "id"> = {
   status: "pending",
   createdAt: Timestamp.now(),
   userId: "",
+  message: "",
 };
 
 export default function BuatPengajuan() {
@@ -38,7 +39,9 @@ export default function BuatPengajuan() {
   })) as Sarana[];
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
     setState((prev) => ({
@@ -122,6 +125,16 @@ export default function BuatPengajuan() {
             onChange={handleChange}
             required
             min={1}
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="message">Pesan</label>
+          <Textarea
+            name="message"
+            value={state.message}
+            onChange={handleChange}
+            required
           />
         </div>
 
