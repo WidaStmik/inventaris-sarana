@@ -57,7 +57,7 @@ export default function AuthLayout({ children }: ComponentProps) {
       <Navbar />
       <MobileNavbar />
       <MainNav />
-      <div className="p-4 xl:p-8 overflow-y-auto max-h-screen w-full mb-16 lg:mb-0 mt-6">
+      <div className="p-4 xl:p-8 pb-24 xl:pb-16 lg:px-20 1080p:px-64 2k:px-96 4k:px-[30rem] overflow-y-auto max-h-screen w-full mb-16 lg:mb-0 mt-6">
         <div
           className="flex items-center gap-1 mb-4 cursor-pointer"
           onClick={() => router.back()}
