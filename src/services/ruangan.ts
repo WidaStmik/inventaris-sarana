@@ -12,6 +12,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   updateDoc,
   writeBatch,
@@ -174,6 +175,38 @@ export const ruanganApi = createApi({
         return { data: "success" };
       },
     }),
+    approvePengajuan: build.mutation<string, Pengajuan>({
+      queryFn: async (data) => {
+        const { id, ...rest } = data;
+
+        const batch = writeBatch(db);
+
+        // update pengajuan
+        batch.update(doc(db, "pengajuan", id), {
+          status: "approved",
+        });
+
+        // add saranaRuangan
+        addDoc(collection(db, "ruangan", id, "saranaRuangan"), {
+          ruanganId: rest.ruanganId,
+          saranaId: rest.saranaId,
+          quantity: rest.quantity,
+          condition: "good",
+        });
+
+        await batch.commit();
+
+        return { data: "success" };
+      },
+    }),
+    rejectPengajuan: build.mutation<string, string>({
+      queryFn: async (id) => {
+        await updateDoc(doc(db, "pengajuan", id), {
+          status: "rejected",
+        });
+        return { data: "success" };
+      },
+    }),
   }),
 });
 
@@ -191,4 +224,7 @@ export const {
   useDeleteSaranaMutation,
   useAddPengajuanMutation,
   useCancelPengajuanMutation,
+  useDeletePengajuanMutation,
+  useApprovePengajuanMutation,
+  useRejectPengajuanMutation,
 } = ruanganApi;
