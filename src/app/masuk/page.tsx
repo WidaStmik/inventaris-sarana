@@ -12,8 +12,6 @@ export default function Masuk() {
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
 
-  const router = useRouter();
-
   const handleLogin: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
@@ -23,7 +21,7 @@ export default function Masuk() {
 
     toast.promise(
       signInWithEmailAndPassword(email, password).then((res) => {
-        if (error) {
+        if (!res) {
           throw new Error(error?.message);
         }
       }),
@@ -33,7 +31,7 @@ export default function Masuk() {
           return "Sukses";
         },
         error: (err) => {
-          return err.message;
+          return err.message || "Gagal masuk";
         },
       }
     );
