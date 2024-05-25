@@ -1,5 +1,11 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Kategori, Ruangan, Sarana, SaranaRuangan } from "@/types/ruangan";
+import {
+  Kategori,
+  Pengajuan,
+  Ruangan,
+  Sarana,
+  SaranaRuangan,
+} from "@/types/ruangan";
 import { db, storage } from "./firebase";
 import {
   addDoc,
@@ -65,10 +71,10 @@ export const ruanganApi = createApi({
       },
       invalidatesTags: ["Ruangan"],
     }),
-    deleteRuangan: build.mutation<void, string>({
+    deleteRuangan: build.mutation<string, string>({
       queryFn: async (id) => {
         await deleteDoc(doc(db, "ruangan", id));
-        return { data: undefined };
+        return { data: "success" };
       },
       invalidatesTags: ["Ruangan"],
     }),
@@ -87,10 +93,10 @@ export const ruanganApi = createApi({
       },
       invalidatesTags: ["Kategori"],
     }),
-    deleteKategori: build.mutation<void, string>({
+    deleteKategori: build.mutation<string, string>({
       queryFn: async (id) => {
         await deleteDoc(doc(db, "kategori", id));
-        return { data: undefined };
+        return { data: "success" };
       },
       invalidatesTags: ["Kategori"],
     }),
@@ -141,12 +147,32 @@ export const ruanganApi = createApi({
       },
       invalidatesTags: ["Sarana"],
     }),
-    deleteSarana: build.mutation<void, string>({
+    deleteSarana: build.mutation<string, string>({
       queryFn: async (id) => {
         await deleteDoc(doc(db, "sarana", id));
-        return { data: undefined };
+        return { data: "success" };
       },
       invalidatesTags: ["Sarana"],
+    }),
+    addPengajuan: build.mutation<string, Omit<Pengajuan, "id">>({
+      queryFn: async (arg) => {
+        await addDoc(collection(db, "pengajuan"), arg);
+        return { data: "success" };
+      },
+    }),
+    cancelPengajuan: build.mutation<string, string>({
+      queryFn: async (id) => {
+        await updateDoc(doc(db, "pengajuan", id), {
+          status: "canceled",
+        });
+        return { data: "success" };
+      },
+    }),
+    deletePengajuan: build.mutation<string, string>({
+      queryFn: async (id) => {
+        await deleteDoc(doc(db, "pengajuan", id));
+        return { data: "success" };
+      },
     }),
   }),
 });
@@ -163,4 +189,6 @@ export const {
   useAddSaranaMutation,
   useUpdateSaranaMutation,
   useDeleteSaranaMutation,
+  useAddPengajuanMutation,
+  useCancelPengajuanMutation,
 } = ruanganApi;

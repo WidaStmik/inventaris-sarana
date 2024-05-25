@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface Ruangan {
   id: string;
   name: string;
@@ -35,4 +37,14 @@ export interface Sarana {
   name: string;
   sku?: string;
   category: string;
+}
+
+export interface Pengajuan {
+  id: string;
+  ruanganId: string;
+  saranaId: string;
+  quantity: number;
+  status: "pending" | "approved" | "rejected" | "canceled";
+  createdAt: Timestamp;
+  userId: string;
 }

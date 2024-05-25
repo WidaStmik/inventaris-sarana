@@ -30,7 +30,7 @@ export default function TambahKategori() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    toast.promise(addKategori(state), {
+    toast.promise(addKategori(state).unwrap(), {
       loading: "Menambahkan kategori...",
       success: (data) => {
         setState(initial);

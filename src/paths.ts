@@ -14,4 +14,5 @@ export const claims = {
   "/sarana/tambah": [Roles.Admin],
   "/pengajuan": [Roles.User],
   "/daftar-pengajuan": [Roles.Admin],
+  "/pengajuan/tambah": [Roles.User],
 };
