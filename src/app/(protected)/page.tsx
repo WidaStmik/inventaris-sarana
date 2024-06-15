@@ -15,7 +15,7 @@ export default function Home() {
   const [kategori] = useCollection(collection(db, "kategori"));
 
   const totalSarana = useMemo(
-    () => sarana?.docs.reduce((acc, s) => acc + s.data().quantity, 0),
+    () => sarana?.docs.reduce((acc, s) => acc + Number(s.data().quantity), 0),
     [sarana]
   );
 

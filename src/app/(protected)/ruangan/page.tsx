@@ -59,11 +59,11 @@ export default function DaftarRuangan() {
           .reduce(
             (acc, s) => {
               if (s.condition === "good") {
-                acc.good += s.quantity;
+                acc.good += Number(s.quantity);
               } else {
-                acc.broken += s.quantity;
+                acc.broken += Number(s.quantity);
               }
-              acc.total += s.quantity;
+              acc.total += Number(s.quantity);
               return acc;
             },
             { good: 0, broken: 0, total: 0 }
