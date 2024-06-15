@@ -1,21 +1,24 @@
 "use client";
 
-import { auth, db } from "@/services/firebase";
+import { db } from "@/services/firebase";
 import { collection, collectionGroup } from "firebase/firestore";
-import { useSignOut } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 
 import { Card as RDCard } from "react-daisyui";
 import { useMemo } from "react";
 
 export default function Home() {
-  const [signOut, loading, error] = useSignOut(auth);
   const [sarana] = useCollection(collectionGroup(db, "saranaRuangan"));
   const [ruangan] = useCollection(collection(db, "ruangan"));
   const [kategori] = useCollection(collection(db, "kategori"));
 
   const totalSarana = useMemo(
-    () => sarana?.docs.reduce((acc, s) => acc + Number(s.data().quantity), 0),
+    () =>
+      sarana?.docs.reduce(
+        (acc, s) =>
+          s.data().condition === "good" ? acc + Number(s.data().quantity) : acc,
+        0
+      ),
     [sarana]
   );
 

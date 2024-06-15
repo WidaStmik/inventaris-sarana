@@ -47,7 +47,7 @@ export default function DaftarRuangan() {
 
     return Object.values(grouped).map((s) => ({
       ...s[0],
-      quantity: s.reduce((acc, s) => acc + s.quantity, 0),
+      quantity: s.reduce((acc, s) => acc + Number(s.quantity), 0),
     })) as SaranaData[];
   }, [saranaSnap]);
 
@@ -106,11 +106,7 @@ export default function DaftarRuangan() {
       cell(row, rowIndex, column, id) {
         return (
           <div className="flex items-center gap-2">
-            <span className="text-success">{row.saranaCount?.good ?? 0}</span>
-            <span>+</span>
-            <span className="text-error">{row.saranaCount?.broken ?? 0}</span>
-            <span>=</span>
-            <span className="text-primary">{row.saranaCount?.total ?? 0}</span>
+            {row.saranaCount?.good ?? 0}
           </div>
         );
       },

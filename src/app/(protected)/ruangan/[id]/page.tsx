@@ -210,17 +210,7 @@ export default function RuanganPage(props: PageProps) {
             unSpan
             value={
               <div className="flex items-center gap-2">
-                <span className="text-success">
-                  {data.saranaCount?.good ?? 0}
-                </span>
-                <span>+</span>
-                <span className="text-error">
-                  {data.saranaCount?.broken ?? 0}
-                </span>
-                <span>=</span>
-                <span className="text-primary">
-                  {data.saranaCount?.total ?? 0}
-                </span>
+                {data.saranaCount?.good ?? 0}
               </div>
             }
           />
@@ -231,17 +221,7 @@ export default function RuanganPage(props: PageProps) {
               <div className="flex flex-col gap-2">
                 {saranaRuangan?.map((s, i) => (
                   <div key={i} className="flex items-center gap-2">
-                    <span
-                      className={clsx("text-sm badge", {
-                        "badge-success": s.condition === "good",
-                        "badge-error": s.condition === "broken",
-                      })}
-                    >
-                      {s.condition === "good" ? "Bagus" : "Rusak"}
-                    </span>
-                    <span>
-                      {s.quantity}x {s.name}
-                    </span>
+                    {s.quantity}x {s.name}
                   </div>
                 ))}
               </div>

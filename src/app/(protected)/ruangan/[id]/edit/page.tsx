@@ -291,26 +291,6 @@ export default function EditRuangan(props: PageProps) {
                   required
                   className="lg:w-1/12 w-2/5"
                 />
-                <Select
-                  name="condition"
-                  value={item.condition}
-                  onChange={(e) => {
-                    const { value } = e.target;
-                    setSaranaRuangan((prev) =>
-                      prev.map((s, i) =>
-                        i === idx
-                          ? { ...s, condition: value as "good" | "broken" }
-                          : s
-                      )
-                    );
-                  }}
-                  required
-                  className="lg:w-1/12 w-2/5"
-                >
-                  <option value="">Pilih Kondisi</option>
-                  <option value="good">Baik</option>
-                  <option value="broken">Rusak</option>
-                </Select>
 
                 <Tooltip message="Hapus Sarana">
                   <Button
