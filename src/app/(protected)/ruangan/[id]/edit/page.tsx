@@ -26,6 +26,19 @@ import {
 import { useCollection, useDocument } from "react-firebase-hooks/firestore";
 import toast from "react-hot-toast";
 import { FaRegTrashCan } from "react-icons/fa6";
+import dynamic from "next/dynamic";
+import RerenderError from "@/components/common/error";
+
+// import { ReactPhotoSphereViewer } from 'react-photo-sphere-viewer';
+const ReactPhotoSphereViewer = dynamic(
+  () =>
+    import("react-photo-sphere-viewer").then(
+      (mod) => mod.ReactPhotoSphereViewer
+    ),
+  {
+    ssr: false,
+  }
+);
 
 const initial: Ruangan = {
   id: "",
@@ -40,7 +53,6 @@ const initialSarana: SaranaRuangan[] = [];
 
 export default function EditRuangan(props: PageProps) {
   const [state, setState] = useState<Omit<Ruangan, "id">>(initial);
-  const [images, setImages] = useState<File[]>([]);
   const [saranaRuangan, setSaranaRuangan] =
     useState<SaranaRuangan[]>(initialSarana);
 
@@ -75,7 +87,7 @@ export default function EditRuangan(props: PageProps) {
   const router = useRouter();
 
   const [updateRuangan, { isLoading }] = useUpdateRuanganMutation();
-  const [uploadImages, { isLoading: isUploading }] = useUploadImagesMutation();
+  const [uploadImages] = useUploadImagesMutation();
   const [deleteRuangan, { isLoading: isDeleting }] = useDeleteRuanganMutation();
 
   const data = useMemo(
@@ -113,34 +125,33 @@ export default function EditRuangan(props: PageProps) {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      setImages(Array.from(files));
+      handleUpload(Array.from(files));
     }
   };
 
-  const handleUpload = async () => {
+  const handleUpload = async (images: File[]) => {
     if (images.length) {
-      const res = await uploadImages({
-        id: data.id,
-        images,
+      toast.promise(uploadImages({ id: data.id, images }).unwrap(), {
+        loading: "Mengupload gambar...",
+        success: (res) => {
+          setState((prev) => ({
+            ...prev,
+            images: res?.map((image, i) => ({
+              name: images[i].name,
+              url: image.url,
+            })),
+          }));
+          return "Gambar berhasil diupload";
+        },
+        error: (error) => {
+          return `Gagal mengupload gambar: ${error.message}`;
+        },
       });
-      if ("error" in res) {
-        const error = res.error as Error;
-        toast.error(`Gagal mengupload gambar: ${error.message}`);
-      } else {
-        setState((prev) => ({
-          ...prev,
-          images: res.data?.map((image, i) => ({
-            name: images[i].name,
-            url: image.url,
-          })),
-        }));
-        setImages([]);
-      }
     }
   };
 
   const handleDelete = async () => {
-    toast.promise(deleteRuangan(data.id), {
+    toast.promise(deleteRuangan(data.id).unwrap(), {
       loading: "Menghapus ruangan...",
       success: () => {
         router.push("/ruangan");
@@ -170,10 +181,7 @@ export default function EditRuangan(props: PageProps) {
     );
   };
 
-  const mainImage = useMemo(
-    () => state.images?.find((img) => img.isHome),
-    [state.images]
-  );
+  const mainImage = useMemo(() => state.images?.[0], [state.images]);
 
   useEffect(() => {
     if (data) {
@@ -341,134 +349,14 @@ export default function EditRuangan(props: PageProps) {
           />
           {mainImage && (
             <div className="relative border mt-2">
-              <Image
-                src={mainImage.url}
-                width={400}
-                height={400}
-                className="w-full object-contain"
-                alt="Ruangan"
-              />
-              <Tooltip message="Gambar Utama" className="absolute top-2 left-2">
-                <Toggle
-                  checked={mainImage.isHome}
-                  onChange={(e) => {
-                    // remove this image as home image
-                    setState((prev) => ({
-                      ...prev,
-                      images: prev.images?.map((image) => ({
-                        ...image,
-                        isHome: false,
-                      })),
-                    }));
-                  }}
+              <RerenderError>
+                <ReactPhotoSphereViewer
+                  src={mainImage.url}
+                  width="100%"
+                  height="768px"
                 />
-              </Tooltip>
-              <div className="absolute bottom-0 left-0 right-0 bg-base-300 p-2 flex items-center justify-between">
-                <span>{mainImage.name}</span>
-
-                <span className="text- text-primary">Gambar Utama</span>
-              </div>
+              </RerenderError>
             </div>
-          )}
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
-            {state.images
-              ?.filter((img) => !img.isHome)
-              .map((img, i) => (
-                <div key={i} className="relative border">
-                  <Image
-                    src={img.url}
-                    width={400}
-                    height={400}
-                    className="object-contain w-96"
-                    alt="Ruangan"
-                  />
-                  <Tooltip
-                    message="Gambar Utama"
-                    className="absolute top-2 left-2"
-                  >
-                    <Toggle
-                      checked={img.isHome}
-                      onChange={(e) => {
-                        // set this image as home image, and remove the previous home image
-                        setState((prev) => ({
-                          ...prev,
-                          images: prev.images?.map((image) => ({
-                            ...image,
-                            isHome: image === img,
-                          })),
-                        }));
-                      }}
-                    />
-                  </Tooltip>
-
-                  <Button
-                    type="button"
-                    color="error"
-                    className="absolute top-2 right-2"
-                    onClick={() => {
-                      setState((prev) => ({
-                        ...prev,
-                        images: prev.images?.filter((_, index) => index !== i),
-                      }));
-                    }}
-                  >
-                    <FaRegTrashCan />
-                  </Button>
-                  <div className="absolute bottom-0 left-0 right-0 bg-base-300 p-2 flex items-center justify-between">
-                    <span>{img.name}</span>
-
-                    {img.isHome && (
-                      <span className="text- text-primary">Gambar Utama</span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            {images.map((img, i) => (
-              <div key={i} className="relative border rounded-xl shadow-md">
-                <Image
-                  src={URL.createObjectURL(img)}
-                  width={400}
-                  height={400}
-                  className="object-contain w-96"
-                  alt="Ruangan"
-                />
-                <Tooltip
-                  message="Silahkan upload gambar terlebih dahulu"
-                  className="absolute top-2 left-2"
-                >
-                  <Toggle disabled />
-                </Tooltip>
-
-                <Button
-                  type="button"
-                  color="error"
-                  className="absolute top-2 right-2"
-                  onClick={() => {
-                    setImages((prev) => prev.filter((_, index) => index !== i));
-                  }}
-                >
-                  <FaRegTrashCan />
-                </Button>
-                <div className="absolute bottom-0 left-0 right-0 bg-base-300 p-2 rounded-b-xl">
-                  {img.name}
-                  <span className="text-xs text-gray-500 ml-2">
-                    ({(img.size / 1024).toFixed(2)} KB)
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {images.length > 0 && (
-            <Button
-              type="button"
-              color="primary"
-              loading={isUploading}
-              onClick={handleUpload}
-              className="mt-4"
-            >
-              Upload
-            </Button>
           )}
         </div>
 

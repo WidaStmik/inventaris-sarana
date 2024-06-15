@@ -18,6 +18,8 @@ import ExcelJs from "exceljs";
 
 import _ from "lodash";
 import { getBucketPath, getBufferFromPath } from "@/app/helpers";
+import RerenderError from "@/components/common/error";
+import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
 
 type SaranaData = SaranaRuangan & Sarana;
 
@@ -78,10 +80,7 @@ export default function RuanganPage(props: PageProps) {
     [snapshot, saranaRuangan]
   );
 
-  const mainImage = useMemo(
-    () => data.images?.find((img) => img.isHome),
-    [data.images]
-  );
+  const mainImage = useMemo(() => data.images?.[0], [data.images]);
 
   const handlePrint = async () => {
     const workbook = new ExcelJs.Workbook();
@@ -233,49 +232,16 @@ export default function RuanganPage(props: PageProps) {
             value={
               <div>
                 {mainImage && (
-                  <div className="relative border">
-                    <Image
-                      src={mainImage.url}
-                      width={400}
-                      height={400}
-                      className="w-full object-contain"
-                      alt="Ruangan"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-base-300 p-2 flex items-center justify-between">
-                      <span>{mainImage.name}</span>
-
-                      <span className="text- text-primary">Gambar Utama</span>
-                    </div>
+                  <div className="relative border mt-2">
+                    <RerenderError>
+                      <ReactPhotoSphereViewer
+                        src={mainImage.url}
+                        width="100%"
+                        height="768px"
+                      />
+                    </RerenderError>
                   </div>
                 )}
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 mt-4">
-                  {data.images
-                    ?.filter((img) => !img.isHome)
-                    .map((img, i) => (
-                      <div key={i} className="relative border">
-                        <Image
-                          src={img.url}
-                          width={400}
-                          height={400}
-                          className={clsx("object-contain", {
-                            "w-full h-full": img.isHome,
-                            "w-96": !img.isHome,
-                          })}
-                          alt="Ruangan"
-                        />
-
-                        <div className="absolute bottom-0 left-0 right-0 bg-base-300 p-2 flex items-center justify-between">
-                          <span>{img.name}</span>
-
-                          {img.isHome && (
-                            <span className="text- text-primary">
-                              Gambar Utama
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                </div>
               </div>
             }
           />
