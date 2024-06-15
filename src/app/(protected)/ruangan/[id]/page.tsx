@@ -87,16 +87,22 @@ export default function RuanganPage(props: PageProps) {
     const workbook = new ExcelJs.Workbook();
     const worksheet = workbook.addWorksheet("Ruangan");
 
-    worksheet.columns = [
-      { width: 20 },
-      { width: 50 },
-      { width: 20 },
-      { width: 20 },
-    ];
-    worksheet.mergeCells("A1:D1");
-    worksheet.getCell("A1").value = "Detail Ruangan";
-    worksheet.getCell("A1").alignment = { horizontal: "center" };
-    worksheet.getCell("A1").font = { bold: true };
+    const kopSuratRes = await fetch("/kop-surat.png");
+    const kopSurat = await kopSuratRes.blob();
+
+    const kopImg = workbook.addImage({
+      buffer: await kopSurat.arrayBuffer(),
+      extension: "png",
+    });
+
+    worksheet.getRow(1).height = 125;
+    worksheet.addImage(kopImg, "A1:C1");
+
+    worksheet.columns = [{ width: 30 }, { width: 50 }, { width: 30 }];
+    worksheet.mergeCells("A2:C2");
+    worksheet.getCell("A2").value = "Detail Ruangan";
+    worksheet.getCell("A2").alignment = { horizontal: "center" };
+    worksheet.getCell("A2").font = { bold: true };
 
     worksheet.addRow(["Nama Ruangan", data.name]);
     worksheet.addRow(["Kode Ruangan", data.code]);
@@ -104,19 +110,14 @@ export default function RuanganPage(props: PageProps) {
     worksheet.addRow(["Jumlah Sarana", data.saranaCount?.total]);
 
     worksheet.addRow([]);
-    worksheet.mergeCells("A7:D7");
-    worksheet.getCell("A7").value = "Sarana";
-    worksheet.getCell("A7").alignment = { horizontal: "center" };
-    worksheet.getCell("A7").font = { bold: true };
+    worksheet.mergeCells("A8:C8");
+    worksheet.getCell("A8").value = "Sarana";
+    worksheet.getCell("A8").alignment = { horizontal: "center" };
+    worksheet.getCell("A8").font = { bold: true };
 
-    worksheet.addRow(["SKU", "Nama Sarana", "Kondisi", "Jumlah"]);
+    worksheet.addRow(["SKU", "Nama Sarana", "Jumlah"]);
     saranaRuangan?.forEach((s, i) => {
-      worksheet.addRow([
-        s.sku,
-        s.name,
-        s.condition === "good" ? "Bagus" : "Rusak",
-        s.quantity,
-      ]);
+      worksheet.addRow([s.sku, s.name, s.quantity]);
     });
 
     // add images
@@ -124,7 +125,7 @@ export default function RuanganPage(props: PageProps) {
     worksheet.addRow([]);
 
     let currentRow = worksheet.rowCount;
-    worksheet.mergeCells(`A${currentRow}:D${currentRow}`);
+    worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
     worksheet.getCell(`A${currentRow}`).value = "Gambar Ruangan";
     worksheet.getCell(`A${currentRow}`).alignment = { horizontal: "center" };
     worksheet.getCell(`A${currentRow}`).font = { bold: true };
@@ -143,10 +144,10 @@ export default function RuanganPage(props: PageProps) {
       });
 
       const row = worksheet.getRow(currentRow);
-      worksheet.mergeCells(`A${currentRow}:D${currentRow}`);
+      worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
       row.height = 400;
 
-      worksheet.addImage(img, `A${currentRow}:D${currentRow}`);
+      worksheet.addImage(img, `A${currentRow}:C${currentRow}`);
       currentRow++;
     }
 
