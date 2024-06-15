@@ -15,6 +15,7 @@ export interface Ruangan {
     url: string;
     isHome?: boolean;
   }[];
+  area: string;
 }
 
 export interface SaranaRuangan {

@@ -90,11 +90,11 @@ export default function DaftarRuangan() {
     {
       name: "Nama Ruangan",
       selector: (row) => row.name,
+      width: "200px",
     },
     {
       name: "Kode Ruangan",
       selector: (row) => row.code,
-      width: "150px",
     },
     {
       name: "Kategori Ruangan",
@@ -102,7 +102,7 @@ export default function DaftarRuangan() {
     },
     {
       name: "Jumlah Sarana",
-      width: "200px",
+      width: "150px",
       cell(row, rowIndex, column, id) {
         return (
           <div className="flex items-center gap-2">
@@ -110,6 +110,11 @@ export default function DaftarRuangan() {
           </div>
         );
       },
+    },
+    {
+      name: "Ukuran Ruangan",
+      selector: (row) => row.area,
+      width: "150px",
     },
     {
       name: "Aksi",

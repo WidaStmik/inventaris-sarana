@@ -45,6 +45,7 @@ const initial: Ruangan = {
   name: "",
   code: "",
   category: "",
+  area: "",
 };
 
 type SaranaData = SaranaRuangan & Sarana;
@@ -337,6 +338,17 @@ export default function EditRuangan(props: PageProps) {
           >
             Tambah Sarana
           </Button>
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="code">Ukuran Ruangan (meter)</label>
+          <Input
+            placeholder="Contoh: 10x10"
+            name="area"
+            value={state.area}
+            onChange={handleChange}
+            required
+          />
         </div>
 
         <div className="flex flex-col">
