@@ -19,6 +19,7 @@ const initial: Omit<Ruangan, "id"> = {
     broken: 0,
     good: 0,
   },
+  area: "",
 };
 
 export default function TambahRuangan() {
