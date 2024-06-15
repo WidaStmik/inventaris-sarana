@@ -107,12 +107,13 @@ export default function RuanganPage(props: PageProps) {
     worksheet.addRow(["Kode Ruangan", data.code]);
     worksheet.addRow(["Kategori Ruangan", data.category]);
     worksheet.addRow(["Jumlah Sarana", data.saranaCount?.total]);
+    worksheet.addRow(["Ukuruan Ruangan", data.area]);
 
     worksheet.addRow([]);
-    worksheet.mergeCells("A8:C8");
-    worksheet.getCell("A8").value = "Sarana";
-    worksheet.getCell("A8").alignment = { horizontal: "center" };
-    worksheet.getCell("A8").font = { bold: true };
+    worksheet.mergeCells("A9:C9");
+    worksheet.getCell("A9").value = "Sarana";
+    worksheet.getCell("A9").alignment = { horizontal: "center" };
+    worksheet.getCell("A9").font = { bold: true };
 
     worksheet.addRow(["SKU", "Nama Sarana", "Jumlah"]);
     saranaRuangan?.forEach((s, i) => {
@@ -226,6 +227,7 @@ export default function RuanganPage(props: PageProps) {
               </div>
             }
           />
+          <RuanganInfo label="Ukuran Ruangan" value={data.area} />
           <RuanganInfo
             label="Gambar Ruangan"
             unSpan
