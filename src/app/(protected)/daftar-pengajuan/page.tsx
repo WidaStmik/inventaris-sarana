@@ -88,7 +88,7 @@ export default function PengajuanPage() {
       cell(row) {
         return <span className="text-wrap">{row.name}</span>;
       },
-      width: "115srcapp(protected)kategoripage.tsxpx",
+      width: "115px",
     },
     {
       name: "Alasan Pengajuan",
