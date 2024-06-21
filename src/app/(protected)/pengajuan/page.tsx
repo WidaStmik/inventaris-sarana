@@ -61,14 +61,14 @@ export default function PengajuanPage() {
       },
     },
     {
-      name: "Sarana",
+      name: "Nama Barang",
       cell(row) {
         const kategori = saranaData?.find((k) => k.id === row.saranaId);
         return kategori?.name;
       },
     },
     {
-      name: "Jumlah",
+      name: "Banyaknya",
       selector: (row) => row.quantity,
     },
     {
@@ -97,7 +97,7 @@ export default function PengajuanPage() {
       },
     },
     {
-      name: "Pesan",
+      name: "Alasan Pengajuan",
       cell(row) {
         return <span className="text-wrap">{row.message}</span>;
       },

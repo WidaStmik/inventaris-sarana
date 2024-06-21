@@ -62,25 +62,25 @@ export default function PengajuanPage() {
       },
     },
     {
-      name: "Sarana",
+      name: "Nama Barang",
       cell(row) {
         const kategori = saranaData?.find((k) => k.id === row.saranaId);
         return kategori?.name;
       },
     },
     {
-      name: "Jumlah",
+      name: "Banyaknya",
       selector: (row) => row.quantity,
     },
     {
-      name: "User",
+      name: "Pengaju",
       cell(row) {
         const user = users?.find((u) => u.uid === row.userId);
         return user?.displayName ?? user?.email ?? user?.uid;
       },
     },
     {
-      name: "Pesan",
+      name: "Alasan Pengajuan",
       cell(row) {
         return <span className="text-wrap">{row.message}</span>;
       },

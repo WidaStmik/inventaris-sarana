@@ -98,7 +98,7 @@ export default function BuatPengajuan() {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="saranId">Sarana</label>
+          <label htmlFor="saranId">Nama Barang</label>
           <Select
             name="saranaId"
             value={state.saranaId}
@@ -117,7 +117,7 @@ export default function BuatPengajuan() {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="quantity">Jumlah</label>
+          <label htmlFor="quantity">Banyaknya</label>
           <Input
             type="number"
             name="quantity"
@@ -129,7 +129,7 @@ export default function BuatPengajuan() {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="message">Pesan</label>
+          <label htmlFor="message">Alasan Pengajuan</label>
           <Textarea
             name="message"
             value={state.message}
