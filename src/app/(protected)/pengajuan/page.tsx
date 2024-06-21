@@ -83,7 +83,7 @@ export default function PengajuanPage() {
       cell(row) {
         return (
           <span
-            className={`px-2 py-1 rounded-full ${
+            className={`px-1 py-1 rounded-full ${
               row.status === "pending"
                 ? "bg-primary text-primary-content"
                 : row.status === "approved"
@@ -95,6 +95,13 @@ export default function PengajuanPage() {
           </span>
         );
       },
+    },
+    {
+      name: "Nama Pengaju",
+      cell(row) {
+        return <span className="text-wrap">{row.name}</span>;
+      },
+      width: "150px",
     },
     {
       name: "Alasan Pengajuan",

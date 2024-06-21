@@ -60,6 +60,7 @@ export default function PengajuanPage() {
         const ruangan = ruanganData?.find((r) => r.id === row.ruanganId);
         return ruangan?.name;
       },
+      width: "90px",
     },
     {
       name: "Nama Barang",
@@ -67,24 +68,34 @@ export default function PengajuanPage() {
         const kategori = saranaData?.find((k) => k.id === row.saranaId);
         return kategori?.name;
       },
+      width: "110px",
     },
     {
       name: "Banyaknya",
       selector: (row) => row.quantity,
+      width: "95px",
     },
     {
-      name: "Pengaju",
+      name: "Email Pengaju",
       cell(row) {
         const user = users?.find((u) => u.uid === row.userId);
         return user?.displayName ?? user?.email ?? user?.uid;
       },
+      width: "140px",
+    },
+    {
+      name: "Nama Pengaju",
+      cell(row) {
+        return <span className="text-wrap">{row.name}</span>;
+      },
+      width: "115px",
     },
     {
       name: "Alasan Pengajuan",
       cell(row) {
         return <span className="text-wrap">{row.message}</span>;
       },
-      width: "200px",
+      width: "150px",
     },
     {
       name: "Tanggal",
@@ -110,6 +121,7 @@ export default function PengajuanPage() {
           </span>
         );
       },
+      width: "110px",
     },
     {
       name: "Aksi",

@@ -22,10 +22,12 @@ const columns: TableColumn<Kategori>[] = [
   {
     name: "Kategori untuk",
     selector: (row) => row.kind,
+    width: "120px",
   },
   {
     name: "Deskripsi",
     selector: (row) => row.description,
+    width: "600px",
   },
   {
     name: "Aksi",

@@ -17,6 +17,7 @@ const initial: Omit<Pengajuan, "id"> = {
   status: "pending",
   createdAt: Timestamp.now(),
   userId: "",
+  name: "",
   message: "",
 };
 
@@ -125,6 +126,16 @@ export default function BuatPengajuan() {
             onChange={handleChange}
             required
             min={1}
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="name">Nama Pengaju</label>
+          <Textarea
+            name="name"
+            value={state.name}
+            onChange={handleChange}
+            required
           />
         </div>
 

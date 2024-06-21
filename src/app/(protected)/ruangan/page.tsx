@@ -90,11 +90,12 @@ export default function DaftarRuangan() {
     {
       name: "Nama Ruangan",
       selector: (row) => row.name,
-      width: "200px",
+      width: "150px",
     },
     {
       name: "Kode Ruangan",
       selector: (row) => row.code,
+      width: "125px",
     },
     {
       name: "Kategori Ruangan",
