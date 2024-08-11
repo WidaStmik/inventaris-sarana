@@ -10,6 +10,7 @@ import { PageProps } from "@/types/common";
 import { Kategori, Sarana } from "@/types/ruangan";
 import { collection, doc } from "firebase/firestore";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { Button, Input, Select } from "react-daisyui";
 import { useCollection, useDocument } from "react-firebase-hooks/firestore";
@@ -19,6 +20,8 @@ export default function EditSarana(props: PageProps) {
   const [snapshot, loading, error] = useDocument(
     doc(db, "sarana", props.params.id)
   );
+
+  const router = useRouter();
 
   const [kategoriSnapshot] = useCollection(collection(db, "kategori"));
   const kategori = useMemo(
@@ -53,14 +56,26 @@ export default function EditSarana(props: PageProps) {
     }));
   };
 
+  const onDelete = async () => {
+    toast.promise(deleteSarana(data.id), {
+      loading: "Menghapus sarana...",
+      success: () => {
+        router.push("/sarana");
+        return `Sarana ${data.name} berhasil dihapus!`;
+      },
+      error: (error) => {
+        return `Gagal menghapus sarana: ${error.message}`;
+      },
+    });
+  };
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     toast.promise(updateSarana(state), {
       loading: "Mengupdate sarana...",
       success: (res) => {
-        setState(data);
-
+        router.push("/sarana");
         return `Sarana ${state.name} berhasil update!`;
       },
       error: (error) => {
@@ -126,7 +141,7 @@ export default function EditSarana(props: PageProps) {
           </Button>
 
           <Confirmation
-            onConfirm={deleteSarana}
+            onConfirm={onDelete}
             text="Apakah anda yakin ingin menghapus kategori ini?"
             className="flex-1"
           >

@@ -13,6 +13,7 @@ import React, { ReactPropTypes, useEffect, useMemo, useState } from "react";
 import { Button, Input, Select } from "react-daisyui";
 import { useDocument, useDocumentData } from "react-firebase-hooks/firestore";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function EditKategori(props: PageProps) {
   const [snapshot, loading, error] = useDocument(
@@ -23,6 +24,8 @@ export default function EditKategori(props: PageProps) {
     () => ({ ...snapshot?.data(), id: snapshot?.id } as Kategori),
     [snapshot]
   );
+
+  const router = useRouter();
 
   const [state, setState] = useState<Kategori>(data);
   const [updateKategori, { isLoading }] = useUpdateKategoriMutation();
@@ -44,14 +47,26 @@ export default function EditKategori(props: PageProps) {
     }));
   };
 
+  const onDelete = async () => {
+    toast.promise(deleteKategori(data.id), {
+      loading: "Menghapus kategori...",
+      success: () => {
+        router.push("/kategori");
+        return `Kategori ${data.name} berhasil dihapus!`;
+      },
+      error: (error) => {
+        return `Gagal menghapus kategori: ${error.message}`;
+      },
+    });
+  };
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     toast.promise(updateKategori(state), {
       loading: "Mengupdate kategori...",
       success: (res) => {
-        setState(data);
-
+        router.push("/kategori");
         return `Kategori ${state.name} berhasil update!`;
       },
       error: (error) => {
@@ -107,7 +122,7 @@ export default function EditKategori(props: PageProps) {
           </Button>
 
           <Confirmation
-            onConfirm={deleteKategori}
+            onConfirm={onDelete}
             text="Apakah anda yakin ingin menghapus kategori ini?"
             className="flex-1"
           >
