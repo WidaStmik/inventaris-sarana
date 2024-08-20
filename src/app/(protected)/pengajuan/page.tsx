@@ -1,8 +1,8 @@
 "use client";
 import { Kategori, Pengajuan, Ruangan, Sarana } from "@/types/ruangan";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { Button } from "react-daisyui";
+import { Button, Input } from "react-daisyui";
 import { FaPlus } from "react-icons/fa";
 import { collection, query, where } from "firebase/firestore";
 import { auth, db } from "@/services/firebase";
@@ -21,6 +21,7 @@ export default function PengajuanPage() {
   const [snapshot, loading, error] = useCollection(
     query(collection(db, "pengajuan"), where("userId", "==", user?.uid))
   );
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const data = snapshot?.docs.map((doc) => ({
     ...doc.data(),
@@ -47,7 +48,21 @@ export default function PengajuanPage() {
     });
   };
 
-  const columns: TableColumn<Pengajuan>[] = [
+  const pengajuanWithData = useMemo(() => {
+    return data?.map((pengajuan) => {
+      const ruangan = ruanganData?.find((r) => r.id === pengajuan.ruanganId);
+      const sarana = saranaData?.find((k) => k.id === pengajuan.saranaId);
+      return {
+        ...pengajuan,
+        ruangan: ruangan?.name ?? pengajuan.ruanganId,
+        sarana: sarana?.name ?? pengajuan.saranaId,
+        name: user?.displayName ?? user?.email ?? user?.uid ?? "",
+        email: user?.email ?? user?.uid ?? "",
+      };
+    });
+  }, [data, ruanganData, saranaData]);
+
+  const columns: TableColumn<(typeof pengajuanWithData)[number]>[] = [
     {
       name: "#",
       selector: (_, index) => Number(index) + 1,
@@ -55,17 +70,11 @@ export default function PengajuanPage() {
     },
     {
       name: "Ruangan",
-      cell(row) {
-        const ruangan = ruanganData?.find((r) => r.id === row.ruanganId);
-        return ruangan?.name;
-      },
+      selector: (row) => row.ruangan,
     },
     {
       name: "Nama Barang",
-      cell(row) {
-        const kategori = saranaData?.find((k) => k.id === row.saranaId);
-        return kategori?.name;
-      },
+      selector: (row) => row.sarana,
     },
     {
       name: "Banyaknya",
@@ -130,6 +139,17 @@ export default function PengajuanPage() {
       },
     },
   ];
+
+  const filteredData = useMemo(() => {
+    if (!searchQuery) return pengajuanWithData;
+    return pengajuanWithData?.filter(
+      (d) =>
+        d.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        d.ruangan.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        d.sarana.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [pengajuanWithData, searchQuery]);
+
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -141,9 +161,17 @@ export default function PengajuanPage() {
         </Link>
       </div>
       <div className="mt-4">
+        <div className="flex justify-end mb-2">
+          <Input
+            placeholder="Filter berdasarkan nama barang, ruangan, atau pengaju"
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full md:w-96 placeholder:text-xs"
+            size="sm"
+          />
+        </div>
         <DataTable
           columns={columns}
-          data={data ?? []}
+          data={filteredData ?? []}
           progressPending={loading}
         />
       </div>

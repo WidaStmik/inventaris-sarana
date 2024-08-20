@@ -1,8 +1,8 @@
 "use client";
 import { Kategori, Pengajuan, Ruangan, Sarana } from "@/types/ruangan";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { Button } from "react-daisyui";
+import { Button, Input } from "react-daisyui";
 import { FaPlus } from "react-icons/fa";
 import { collection, query, where } from "firebase/firestore";
 import { auth, db } from "@/services/firebase";
@@ -23,6 +23,8 @@ import { useGetUsersQuery } from "@/services/user";
 export default function PengajuanPage() {
   const [approvePengajuan] = useApprovePengajuanMutation();
   const [rejectPengajuan] = useRejectPengajuanMutation();
+
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [user] = useAuthState(auth);
 
@@ -48,7 +50,22 @@ export default function PengajuanPage() {
     id: doc.id,
   })) as Sarana[] | undefined;
 
-  const columns: TableColumn<Pengajuan>[] = [
+  const pengajuanWithData = useMemo(() => {
+    return data?.map((pengajuan) => {
+      const ruangan = ruanganData?.find((r) => r.id === pengajuan.ruanganId);
+      const sarana = saranaData?.find((k) => k.id === pengajuan.saranaId);
+      const user = users?.find((u) => u.uid === pengajuan.userId);
+      return {
+        ...pengajuan,
+        ruangan: ruangan?.name ?? pengajuan.ruanganId,
+        sarana: sarana?.name ?? pengajuan.saranaId,
+        name: user?.displayName ?? user?.email ?? user?.uid ?? "",
+        email: user?.email ?? user?.uid ?? "",
+      };
+    });
+  }, [data, ruanganData, saranaData, users]);
+
+  const columns: TableColumn<(typeof pengajuanWithData)[number]>[] = [
     {
       name: "#",
       selector: (_, index) => Number(index) + 1,
@@ -56,19 +73,13 @@ export default function PengajuanPage() {
     },
     {
       name: "Ruangan",
-      cell(row) {
-        const ruangan = ruanganData?.find((r) => r.id === row.ruanganId);
-        return ruangan?.name;
-      },
-      width: "90px",
+      selector: (row) => row.ruangan,
+      width: "200px",
     },
     {
       name: "Nama Barang",
-      cell(row) {
-        const kategori = saranaData?.find((k) => k.id === row.saranaId);
-        return kategori?.name;
-      },
-      width: "110px",
+      selector: (row) => row.sarana,
+      width: "200px",
     },
     {
       name: "Banyaknya",
@@ -77,18 +88,13 @@ export default function PengajuanPage() {
     },
     {
       name: "Email Pengaju",
-      cell(row) {
-        const user = users?.find((u) => u.uid === row.userId);
-        return user?.displayName ?? user?.email ?? user?.uid;
-      },
+      selector: (row) => row.email,
       width: "140px",
     },
     {
       name: "Nama Pengaju",
-      cell(row) {
-        return <span className="text-wrap">{row.name}</span>;
-      },
-      width: "115px",
+      selector: (row) => row.name,
+      width: "140px",
     },
     {
       name: "Alasan Pengajuan",
@@ -168,15 +174,35 @@ export default function PengajuanPage() {
       },
     },
   ];
+
+  const filteredData = useMemo(() => {
+    if (!searchQuery) return pengajuanWithData;
+    return pengajuanWithData?.filter((pengajuan) => {
+      return (
+        pengajuan.ruangan.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pengajuan.sarana.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pengajuan.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    });
+  }, [searchQuery, pengajuanWithData]);
+
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <h1 className="text-3xl font-semibold">Daftar Pengajuan</h1>
       </div>
       <div className="mt-4">
+        <div className="flex justify-end mb-2">
+          <Input
+            placeholder="Filter berdasarkan nama barang, ruangan, atau pengaju"
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full md:w-96 placeholder:text-xs"
+            size="sm"
+          />
+        </div>
         <DataTable
           columns={columns}
-          data={data ?? []}
+          data={filteredData ?? []}
           progressPending={loading}
         />
       </div>

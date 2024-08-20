@@ -3,8 +3,8 @@ import { db } from "@/services/firebase";
 import { Sarana } from "@/types/ruangan";
 import { collection } from "firebase/firestore";
 import Link from "next/link";
-import React from "react";
-import { Button } from "react-daisyui";
+import React, { useMemo, useState } from "react";
+import { Button, Input } from "react-daisyui";
 import DataTable, { TableColumn } from "react-data-table-component";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { FaPlus } from "react-icons/fa";
@@ -51,6 +51,15 @@ export default function DaftarSarana() {
     ...doc.data(),
     id: doc.id,
   })) as Sarana[];
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const filteredData = useMemo(() => {
+    if (!searchQuery) return data;
+
+    return data?.filter((d) =>
+      d.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [data, searchQuery]);
 
   return (
     <div>
@@ -63,10 +72,18 @@ export default function DaftarSarana() {
         </Link>
       </div>
       <div className="mt-4">
+        <div className="flex justify-end mb-2">
+          <Input
+            placeholder="Filter berdasarkan nama barang, ruangan, atau pengaju"
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full md:w-96 placeholder:text-xs"
+            size="sm"
+          />
+        </div>
         <DataTable
           progressPending={loading}
           columns={columns}
-          data={data ?? []}
+          data={filteredData ?? []}
         />
       </div>
     </div>

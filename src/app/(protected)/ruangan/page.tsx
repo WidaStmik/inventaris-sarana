@@ -1,8 +1,8 @@
 "use client";
 import { Ruangan, Sarana, SaranaRuangan } from "@/types/ruangan";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { Button } from "react-daisyui";
+import { Button, Input } from "react-daisyui";
 import { FaPlus } from "react-icons/fa";
 import { collection, collectionGroup } from "firebase/firestore";
 import { db } from "@/services/firebase";
@@ -19,6 +19,7 @@ type SaranaData = Sarana & SaranaRuangan;
 export default function DaftarRuangan() {
   const [snapshot, loading, error] = useCollection(collection(db, "ruangan"));
   const [saranaSnap] = useCollection(collectionGroup(db, "saranaRuangan"));
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [saranaSnapshot] = useCollection(collection(db, "sarana"));
   const sarana = useMemo(
@@ -141,6 +142,14 @@ export default function DaftarRuangan() {
       },
     },
   ];
+
+  const filteredData = useMemo(() => {
+    if (!searchQuery) return data;
+    return data?.filter((d) =>
+      d.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [data, searchQuery]);
+
   return (
     <div>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -154,10 +163,18 @@ export default function DaftarRuangan() {
         )}
       </div>
       <div className="mt-4">
+        <div className="flex justify-end mb-2">
+          <Input
+            placeholder="Filter berdasarkan nama ruangan"
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full md:w-96 placeholder:text-xs"
+            size="sm"
+          />
+        </div>
         <DataTable
           progressPending={loading}
           columns={columns}
-          data={data ?? []}
+          data={filteredData ?? []}
         />
       </div>
     </div>

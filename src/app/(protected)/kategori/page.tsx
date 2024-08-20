@@ -1,8 +1,8 @@
 "use client";
 import { Kategori, Ruangan } from "@/types/ruangan";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import DataTable, { TableColumn } from "react-data-table-component";
-import { Button } from "react-daisyui";
+import { Button, Input } from "react-daisyui";
 import { FaPlus } from "react-icons/fa";
 import { collection } from "firebase/firestore";
 import { db } from "@/services/firebase";
@@ -47,11 +47,19 @@ const columns: TableColumn<Kategori>[] = [
 ];
 
 export default function DaftarKategori() {
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [snapshot, loading, error] = useCollection(collection(db, "kategori"));
   const data = snapshot?.docs.map((doc) => ({
     ...doc.data(),
     id: doc.id,
   })) as Kategori[];
+
+  const filteredData = useMemo(() => {
+    if (!searchQuery) return data;
+    return data?.filter((d) =>
+      d.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [data, searchQuery]);
 
   return (
     <div>
@@ -64,9 +72,17 @@ export default function DaftarKategori() {
         </Link>
       </div>
       <div className="mt-4">
+        <div className="flex justify-end mb-2">
+          <Input
+            placeholder="Filter berdasarkan nama kategori"
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full md:w-96 placeholder:text-xs"
+            size="sm"
+          />
+        </div>
         <DataTable
           columns={columns}
-          data={data ?? []}
+          data={filteredData ?? []}
           progressPending={loading}
         />
       </div>
