@@ -38,6 +38,7 @@ export interface Sarana {
   name: string;
   sku?: string;
   category: string;
+  timestamp?: Timestamp;
 }
 
 export interface Pengajuan {

@@ -2,7 +2,7 @@
 import { db } from "@/services/firebase";
 import { useAddSaranaMutation } from "@/services/ruangan";
 import { Kategori, Sarana } from "@/types/ruangan";
-import { collection } from "firebase/firestore";
+import { collection, Timestamp } from "firebase/firestore";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";
@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 const initial: Omit<Sarana, "id"> = {
   name: "",
   category: "",
+  timestamp: Timestamp.now(),
 };
 
 export default function TambahSarana() {
@@ -33,6 +34,15 @@ export default function TambahSarana() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+
+    if (name === "timestamp") {
+      setState((prev) => ({
+        ...prev,
+        timestamp: Timestamp.fromDate(new Date(value)),
+      }));
+      return;
+    }
+
     setState((prev) => ({
       ...prev,
       [name]: value,
@@ -77,6 +87,17 @@ export default function TambahSarana() {
             name="sku"
             value={state.sku}
             onChange={handleChange}
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="timestamp">Bulan Masuk</label>
+          <Input
+            type="month"
+            name="timestamp"
+            value={state.timestamp?.toDate().toISOString().split("T")[0]}
+            onChange={handleChange}
+            required
           />
         </div>
 

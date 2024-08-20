@@ -8,7 +8,7 @@ import {
 } from "@/services/ruangan";
 import { PageProps } from "@/types/common";
 import { Kategori, Sarana } from "@/types/ruangan";
-import { collection, doc } from "firebase/firestore";
+import { collection, doc, Timestamp } from "firebase/firestore";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
@@ -50,6 +50,13 @@ export default function EditSarana(props: PageProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    if (name === "timestamp") {
+      setState((prev) => ({
+        ...prev,
+        timestamp: Timestamp.fromDate(new Date(value)),
+      }));
+      return;
+    }
     setState((prev) => ({
       ...prev,
       [name]: value,
@@ -108,6 +115,17 @@ export default function EditSarana(props: PageProps) {
             name="sku"
             value={state.sku}
             onChange={handleChange}
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="timestamp">Bulan Masuk</label>
+          <Input
+            type="month"
+            name="timestamp"
+            value={state.timestamp?.toDate().toISOString().slice(0, 7)}
+            onChange={handleChange}
+            required
           />
         </div>
 
