@@ -220,7 +220,7 @@ export default function DaftarSarana() {
       <div className="mt-4">
         <div className="flex justify-end mb-2 gap-2">
           <Input
-            placeholder="Filter berdasarkan nama barang, ruangan, atau pengaju"
+            placeholder="Filter berdasarkan nama sarana"
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full md:w-96 placeholder:text-xs"
             size="sm"
