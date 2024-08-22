@@ -36,6 +36,8 @@ export default function TambahSarana() {
     const { name, value } = e.target;
 
     if (name === "timestamp") {
+      const [year, month] = value.split("-");
+      const date = new Date(Number(year), Number(month) - 1); // Month is 0-indexed
       setState((prev) => ({
         ...prev,
         timestamp: Timestamp.fromDate(new Date(value)),
@@ -95,7 +97,7 @@ export default function TambahSarana() {
           <Input
             type="month"
             name="timestamp"
-            value={state.timestamp?.toDate().toISOString().split("T")[0]}
+            value={state.timestamp?.toDate().toISOString().slice(0, 7)}
             onChange={handleChange}
             required
           />
