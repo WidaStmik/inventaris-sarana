@@ -59,7 +59,7 @@ export default function EditSarana(props: PageProps) {
     }
     setState((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "good" || name === "broken" ? Number(value) : value, // Handle number inputs
     }));
   };
 
@@ -86,7 +86,7 @@ export default function EditSarana(props: PageProps) {
         return `Sarana ${state.name} berhasil update!`;
       },
       error: (error) => {
-        return `Gagal menambahkan sarana: ${error.message}`;
+        return `Gagal mengupdate sarana: ${error.message}`;
       },
     });
   };
@@ -153,6 +153,30 @@ export default function EditSarana(props: PageProps) {
           </div>
         </div>
 
+        <div className="flex flex-col">
+          <label htmlFor="good">Jumlah Kondisi Bagus</label>
+          <Input
+            type="number"
+            name="good"
+            value={state.good}
+            onChange={handleChange}
+            min={0}
+            required
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="broken">Jumlah Kondisi Rusak</label>
+          <Input
+            type="number"
+            name="broken"
+            value={state.broken}
+            onChange={handleChange}
+            min={0}
+            required
+          />
+        </div>
+
         <div className="flex gap-2 items-center mt-4">
           <Button className="flex-1" color="primary" loading={isLoading}>
             Simpan
@@ -160,7 +184,7 @@ export default function EditSarana(props: PageProps) {
 
           <Confirmation
             onConfirm={onDelete}
-            text="Apakah anda yakin ingin menghapus kategori ini?"
+            text="Apakah anda yakin ingin menghapus sarana ini?"
             className="flex-1"
           >
             <Button

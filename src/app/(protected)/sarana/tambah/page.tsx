@@ -14,6 +14,8 @@ const initial: Omit<Sarana, "id"> = {
   name: "",
   category: "",
   timestamp: Timestamp.now(),
+  good: 0, // Initialize good condition quantity
+  broken: 0, // Initialize broken condition quantity
 };
 
 export default function TambahSarana() {
@@ -47,7 +49,7 @@ export default function TambahSarana() {
 
     setState((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "good" || name === "broken" ? Number(value) : value, // Handle number input
     }));
   };
 
@@ -125,6 +127,30 @@ export default function TambahSarana() {
               Tambah Kategori
             </Link>
           </div>
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="good">Jumlah Kondisi Bagus</label>
+          <Input
+            type="number"
+            name="good"
+            value={state.good}
+            onChange={handleChange}
+            min={0}
+            required
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="broken">Jumlah Kondisi Rusak</label>
+          <Input
+            type="number"
+            name="broken"
+            value={state.broken}
+            onChange={handleChange}
+            min={0}
+            required
+          />
         </div>
 
         <Button className="mt-4" color="primary" loading={isLoading}>

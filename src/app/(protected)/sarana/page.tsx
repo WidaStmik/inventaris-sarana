@@ -31,6 +31,16 @@ const columns: TableColumn<Sarana>[] = [
     selector: (row) => row.category,
   },
   {
+    name: "Kondisi Bagus",
+    selector: (row) => row.good ?? 0,
+    width: "150px",
+  },
+  {
+    name: "Kondisi Rusak",
+    selector: (row) => row.broken ?? 0,
+    width: "150px",
+  },
+  {
     name: "Bulan Masuk",
     cell(row) {
       return row.timestamp?.toDate().toLocaleDateString("id-ID", {
@@ -45,7 +55,7 @@ const columns: TableColumn<Sarana>[] = [
   {
     name: "Aksi",
     width: "400px",
-    cell(row, rowIndex, column, id) {
+    cell(row) {
       return (
         <div className="flex items-center gap-2">
           <Link href={`/sarana/${row.id}/edit`}>
@@ -60,7 +70,7 @@ const columns: TableColumn<Sarana>[] = [
 ];
 
 export default function DaftarSarana() {
-  const [snapshot, loading, error] = useCollection(collection(db, "sarana"));
+  const [snapshot, loading] = useCollection(collection(db, "sarana"));
   const [saranaRuanganSnap] = useCollection(
     collectionGroup(db, "saranaRuangan")
   );
@@ -99,11 +109,34 @@ export default function DaftarSarana() {
   const data = useMemo(() => {
     if (!snapshot) return [];
 
-    return snapshot.docs.map((doc) => ({
-      ...doc.data(),
-      id: doc.id,
-    })) as Sarana[];
-  }, [snapshot]);
+    return snapshot.docs.map((doc) => {
+      const saranaData = {
+        ...doc.data(),
+        id: doc.id,
+      } as Sarana;
+
+      // Calculate the good and broken conditions for each sarana
+      const saranaCondition = saranaRuangan?.reduce(
+        (acc, sr) => {
+          if (sr.saranaId === saranaData.id) {
+            if (sr.condition === "good") {
+              acc.good += sr.quantity;
+            } else if (sr.condition === "broken") {
+              acc.broken += sr.quantity;
+            }
+          }
+          return acc;
+        },
+        { good: 0, broken: 0 }
+      );
+
+      return {
+        ...saranaData,
+        good: saranaCondition?.good ?? 0,
+        broken: saranaCondition?.broken ?? 0,
+      };
+    }) as Sarana[];
+  }, [snapshot, saranaRuangan]);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedRows, setSelectedRows] = useState<Sarana[]>([]);
@@ -140,11 +173,17 @@ export default function DaftarSarana() {
       worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
       worksheet.getCell(`A${currentRow}`).value = `Nama Sarana: ${sarana.name}`;
 
-      // uppercase the text
+      // Uppercase the text
       worksheet.getCell(`A${currentRow}`).font = { bold: true };
-      worksheet.addRow(["Ruangan", "SKU", "Jumlah"]);
+      worksheet.addRow([
+        "Ruangan",
+        "SKU",
+        "Jumlah Bagus",
+        "Jumlah Rusak",
+        "Total",
+      ]);
 
-      // seek for the ruangan with the sarana
+      // Seek for the ruangan with the sarana
       const ruanganWithSarana = saranaRuangan?.filter(
         (sr) => sr.saranaId === sarana.id
       );
@@ -166,17 +205,34 @@ export default function DaftarSarana() {
         });
 
         const skuWithDate = `${sku}/${ruanganData.code}/${formattedDate}`;
-        worksheet.addRow([ruanganData?.name, skuWithDate, rws.quantity]);
+
+        worksheet.addRow([
+          ruanganData?.name,
+          skuWithDate,
+          rws.condition === "good" ? rws.quantity : 0,
+          rws.condition === "broken" ? rws.quantity : 0,
+          rws.quantity,
+        ]);
       }
 
-      // add total row
-      const total = ruanganWithSarana?.reduce(
-        (acc, rws) => acc + rws.quantity,
+      // Add total row
+      const totalGood = ruanganWithSarana?.reduce(
+        (acc, rws) => acc + (rws.condition === "good" ? rws.quantity : 0),
+        0
+      );
+      const totalBroken = ruanganWithSarana?.reduce(
+        (acc, rws) => acc + (rws.condition === "broken" ? rws.quantity : 0),
         0
       );
 
-      worksheet.addRow(["Total", "", total]);
-      // make the total row bold
+      worksheet.addRow([
+        "Total",
+        "",
+        totalGood,
+        totalBroken,
+        totalGood + totalBroken,
+      ]);
+      // Make the total row bold
       worksheet.getRow(worksheet.rowCount).font = { bold: true };
 
       worksheet.addRow([]);
@@ -185,7 +241,7 @@ export default function DaftarSarana() {
       currentRow = worksheet.rowCount;
     }
 
-    // set all font size to 12
+    // Set all font sizes to 12
     worksheet.eachRow((row) => {
       row.eachCell((cell) => {
         cell.font = { ...cell.font, size: 12 };
