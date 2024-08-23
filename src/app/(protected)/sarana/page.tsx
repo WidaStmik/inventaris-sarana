@@ -162,9 +162,15 @@ export default function DaftarSarana() {
     });
 
     worksheet.getRow(1).height = 125;
-    worksheet.addImage(kopImg, "A1:C1");
+    worksheet.addImage(kopImg, "A1:E1");
 
-    worksheet.columns = [{ width: 30 }, { width: 50 }, { width: 30 }];
+    worksheet.columns = [
+      { width: 20 },
+      { width: 25 },
+      { width: 15 },
+      { width: 15 },
+      { width: 15 },
+    ];
 
     worksheet.addRow([]);
 
