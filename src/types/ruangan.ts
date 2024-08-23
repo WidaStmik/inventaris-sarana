@@ -38,6 +38,8 @@ export interface Sarana {
   name: string;
   sku?: string;
   category: string;
+  good?: number;
+  broken?: number;
   timestamp?: Timestamp;
 }
 
