@@ -20,28 +20,31 @@ const columns: TableColumn<Sarana>[] = [
   {
     name: "Nama Sarana",
     selector: (row) => row.name,
+    width: "180px",
   },
   {
     name: "SKU",
     selector: (row) => row.sku ?? "-",
-    width: "150px",
+    width: "100px",
   },
   {
     name: "Kategori",
     selector: (row) => row.category,
+    width: "200px",
   },
   {
     name: "Kondisi Bagus",
     selector: (row) => row.good ?? 0,
-    width: "150px",
+    width: "140px",
   },
   {
     name: "Kondisi Rusak",
     selector: (row) => row.broken ?? 0,
-    width: "150px",
+    width: "140px",
   },
   {
     name: "Bulan Masuk",
+    width: "150px",
     cell(row) {
       return row.timestamp?.toDate().toLocaleDateString("id-ID", {
         year: "numeric",
@@ -54,7 +57,7 @@ const columns: TableColumn<Sarana>[] = [
   },
   {
     name: "Aksi",
-    width: "400px",
+    width: "140px",
     cell(row) {
       return (
         <div className="flex items-center gap-2">
