@@ -20,17 +20,17 @@ const columns: TableColumn<Sarana>[] = [
   {
     name: "Nama Sarana",
     selector: (row) => row.name,
-    width: "180px",
+    width: "210px",
   },
   {
     name: "SKU",
     selector: (row) => row.sku ?? "-",
-    width: "100px",
+    width: "110px",
   },
   {
     name: "Kategori",
     selector: (row) => row.category,
-    width: "200px",
+    width: "160px",
   },
   {
     name: "Kondisi Bagus",
